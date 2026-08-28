@@ -1,40 +1,108 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card } from '@/shared/ui/Card';
 import { usePredict } from '../hooks/use-predict';
 import type { Programa } from '../../domain/entities';
 
-function parseCodigos(text: string): number[] {
-  return text
-    .split(/[\s,;]+/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0)
-    .map(Number)
-    .filter((n) => !Number.isNaN(n));
+interface Props {
+  programas: Programa[];
 }
 
-export function PredictPanel() {
-  const [input, setInput] = useState('228118, 761301, 123456');
+export function PredictPanel({ programas }: Props) {
+  const opciones = useMemo(
+    () =>
+      [...programas]
+        .filter((p) => p.prfDenominacion)
+        .sort((a, b) =>
+          (a.prfDenominacion ?? '').localeCompare(b.prfDenominacion ?? ''),
+        ),
+    [programas],
+  );
+
+  const [query, setQuery] = useState('');
+  const [seleccionados, setSeleccionados] = useState<number[]>([]);
+  const [abierto, setAbierto] = useState(false);
   const { resultados, loading, error, predict } = usePredict();
+
+  const sugerencias = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return opciones
+      .filter((p) => !seleccionados.includes(p.codigoPrograma))
+      .filter((p) => (q ? (p.prfDenominacion ?? '').toLowerCase().includes(q) : true))
+      .slice(0, 12);
+  }, [opciones, query, seleccionados]);
+
+  const agregar = (codigo: number) => {
+    setSeleccionados((prev) => [...prev, codigo]);
+    setQuery('');
+    setAbierto(false);
+  };
+
+  const quitar = (codigo: number) => {
+    setSeleccionados((prev) => prev.filter((c) => c !== codigo));
+  };
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    predict(parseCodigos(input));
+    if (seleccionados.length === 0) return;
+    predict(seleccionados);
   };
 
+  const nombre = (codigo: number) =>
+    opciones.find((p) => p.codigoPrograma === codigo)?.prfDenominacion ?? `Código ${codigo}`;
+
   return (
-    <Card title="Predecir probabilidad de éxito por código de programa">
+    <Card title="Predecir probabilidad de éxito por programa">
       <form className="predict-form" onSubmit={onSubmit}>
-        <textarea
-          className="predict-form__input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={3}
-          placeholder="Códigos separados por coma (ej. 228118, 761301)"
-        />
-        <button className="btn" type="submit" disabled={loading}>
+        <div className="combobox">
+          <input
+            className="combobox__input"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setAbierto(true);
+            }}
+            onFocus={() => setAbierto(true)}
+            placeholder="Busca un programa por nombre (ej. Técnico en Cocina)"
+            aria-label="Buscar programa"
+          />
+          {abierto && sugerencias.length > 0 && (
+            <ul className="combobox__list">
+              {sugerencias.map((p) => (
+                <li key={p.codigoPrograma}>
+                  <button
+                    type="button"
+                    className="combobox__option"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      agregar(p.codigoPrograma);
+                    }}
+                  >
+                    <span>{p.prfDenominacion}</span>
+                    <span className="combobox__codigo">#{p.codigoPrograma}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <button className="btn" type="submit" disabled={loading || seleccionados.length === 0}>
           {loading ? 'Prediciendo...' : 'Predecir'}
         </button>
       </form>
+
+      {seleccionados.length > 0 && (
+        <div className="combobox__chips">
+          {seleccionados.map((c) => (
+            <span key={c} className="chip">
+              {nombre(c)}
+              <button type="button" className="chip__x" onClick={() => quitar(c)} aria-label="Quitar">
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
       {error && <div className="error-box">Error: {error}</div>}
       {resultados.length > 0 && <PredictResultTable resultados={resultados} />}
     </Card>

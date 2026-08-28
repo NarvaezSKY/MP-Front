@@ -1,19 +1,31 @@
 import { Card } from '@/shared/ui/Card';
-import type { Metricas, Top30Response } from '../../domain/entities';
+import type { Metricas, Programa } from '../../domain/entities';
 
 interface Props {
   metricas: Metricas | null;
-  top30: Top30Response | null;
+  programas: Programa[];
+  filtrado: boolean;
 }
 
-export function StatCards({ metricas, top30 }: Props) {
+export function StatCards({ metricas, programas, filtrado }: Props) {
+  const total = programas.length;
+  const centros = new Set(programas.map((p) => p.centro ?? 'Sin clasificar')).size;
+  const promedio =
+    total > 0
+      ? programas.reduce((acc, p) => acc + p.probabilidadExito, 0) / total
+      : null;
+
   const items = [
-    { label: 'Programas en entregable', value: top30?.total ?? '—', hint: 'Top 30 (10 x centro)' },
-    { label: 'Centros', value: top30?.centros ?? '—', hint: 'Regional Cauca' },
     {
-      label: 'Prob. promedio (top30)',
-      value: metricas ? `${(metricas.probabilidadPromedio * 100).toFixed(1)}%` : '—',
-      hint: 'Modelo calibrado',
+      label: 'Programas en vista',
+      value: total,
+      hint: filtrado ? 'Filtrado por centro' : 'Top 30 (10 x centro)',
+    },
+    { label: 'Centros', value: centros, hint: 'Regional Cauca' },
+    {
+      label: 'Prob. promedio',
+      value: promedio !== null ? `${(promedio * 100).toFixed(1)}%` : '—',
+      hint: filtrado ? 'Sobre selección' : 'Modelo calibrado',
     },
     {
       label: 'Prob. base (mayoria)',

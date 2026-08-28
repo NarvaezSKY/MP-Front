@@ -3,6 +3,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -36,15 +37,29 @@ export function CentroBarChart({ programas }: Props) {
   return (
     <Card title="Probabilidad promedio por Centro">
       <ResponsiveContainer width="100%" height={260}>
-        <BarChart data={data} margin={{ left: 24, right: 24, top: 8, bottom: 40 }}>
+        <BarChart data={data} margin={{ left: 24, right: 32, top: 16, bottom: 56 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-15} textAnchor="end" interval={0} />
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 10 }}
+            angle={-25}
+            textAnchor="end"
+            interval={0}
+            height={60}
+          />
           <YAxis domain={[0, 100]} unit="%" />
           <Tooltip formatter={(v: number) => `${v}%`} />
           <Bar dataKey="avg" radius={[4, 4, 0, 0]}>
             {data.map((_, i) => (
               <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
             ))}
+            <LabelList
+              dataKey="avg"
+              position="top"
+              formatter={(v: number) => `${v}%`}
+              fontSize={10}
+              fill="#16321f"
+            />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
@@ -56,13 +71,32 @@ export function RedBarChart({ programas }: Props) {
   const data = aggregate(programas, 'redConocimiento').slice(0, 10);
   return (
     <Card title="Probabilidad promedio por Red de Conocimiento (Top 10)">
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} margin={{ left: 24, right: 24, top: 8, bottom: 60 }} layout="vertical">
+      <ResponsiveContainer width="100%" height={Math.max(340, data.length * 34)}>
+        <BarChart
+          data={data}
+          margin={{ left: 8, right: 40, top: 8, bottom: 16 }}
+          layout="vertical"
+          barCategoryGap={8}
+        >
           <CartesianGrid strokeDasharray="3 3" horizontal={false} />
           <XAxis type="number" domain={[0, 100]} unit="%" />
-          <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 10 }} />
+          <YAxis
+            type="category"
+            dataKey="name"
+            width={190}
+            tick={{ fontSize: 10 }}
+            interval={0}
+          />
           <Tooltip formatter={(v: number) => `${v}%`} />
-          <Bar dataKey="avg" radius={[0, 4, 4, 0]} fill="#39a900" />
+          <Bar dataKey="avg" radius={[0, 4, 4, 0]} fill="#39a900">
+            <LabelList
+              dataKey="avg"
+              position="right"
+              formatter={(v: number) => `${v}%`}
+              fontSize={10}
+              fill="#16321f"
+            />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </Card>

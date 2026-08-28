@@ -36,7 +36,10 @@ export function FuentePieChart({ programas }: Props) {
             nameKey="name"
             innerRadius={50}
             outerRadius={90}
-            label={(e: { name?: string; value?: number }) => `${e.name}: ${e.value}`}
+            label={(e: { name?: string; percent?: number }) =>
+              `${e.name}: ${((e.percent ?? 0) * 100).toFixed(0)}%`
+            }
+            labelLine={false}
           >
             {data.map((d) => (
               <Cell key={d.name} fill={COLORS[d.name === 'Con historia' ? 'prediccion_historica' : 'estimacion_similitud']} />

@@ -3,6 +3,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -43,6 +44,13 @@ export function ProbabilityBarChart({ programas }: Props) {
             {data.map((d, i) => (
               <Cell key={i} fill={d.fuente === 'estimacion_similitud' ? '#f99c00' : COLOR} />
             ))}
+            <LabelList
+              dataKey="prob"
+              position="right"
+              formatter={(v: number) => `${v}%`}
+              fontSize={10}
+              fill="#16321f"
+            />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
