@@ -17,6 +17,8 @@ interface Props {
 }
 
 const COLOR = '#39a900';
+const ROW_H = 30;
+const SCROLL_MAX_H = 420;
 
 export function ProbabilityBarChart({ programas }: Props) {
   const data = [...programas]
@@ -29,31 +31,39 @@ export function ProbabilityBarChart({ programas }: Props) {
 
   return (
     <Card title="Probabilidad de éxito por programa (Top 30)">
-      <ResponsiveContainer width="100%" height={Math.max(360, data.length * 22)}>
-        <BarChart layout="vertical" data={data} margin={{ left: 140, right: 24, top: 8, bottom: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-          <XAxis type="number" domain={[0, 100]} unit="%" />
-          <YAxis
-            type="category"
-            dataKey="name"
-            width={140}
-            tick={{ fontSize: 11 }}
-          />
-          <Tooltip formatter={(v: number) => `${v}%`} />
-          <Bar dataKey="prob" radius={[0, 4, 4, 0]}>
-            {data.map((d, i) => (
-              <Cell key={i} fill={d.fuente === 'estimacion_similitud' ? '#f99c00' : COLOR} />
-            ))}
-            <LabelList
-              dataKey="prob"
-              position="right"
-              formatter={(v: number) => `${v}%`}
-              fontSize={10}
-              fill="#16321f"
+      <div className="chart-scroll" style={{ maxHeight: SCROLL_MAX_H }}>
+        <ResponsiveContainer width="100%" height={Math.max(SCROLL_MAX_H, data.length * ROW_H)}>
+          <BarChart
+            layout="vertical"
+            data={data}
+            margin={{ left: 8, right: 48, top: 8, bottom: 8 }}
+            barCategoryGap={8}
+          >
+            <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+            <XAxis type="number" domain={[0, 100]} unit="%" />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={220}
+              tick={{ fontSize: 11 }}
+              interval={0}
             />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+            <Tooltip formatter={(v: number) => `${v}%`} />
+            <Bar dataKey="prob" radius={[0, 4, 4, 0]} barSize={18}>
+              {data.map((d, i) => (
+                <Cell key={i} fill={d.fuente === 'estimacion_similitud' ? '#f99c00' : COLOR} />
+              ))}
+              <LabelList
+                dataKey="prob"
+                position="right"
+                formatter={(v: number) => `${v}%`}
+                fontSize={10}
+                fill="#16321f"
+              />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
       <p className="chart-note">
         Verde = predicción con historia · Amarillo = estimación por similitud
       </p>
