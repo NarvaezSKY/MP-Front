@@ -15,17 +15,17 @@ export function ModelExplorerPage() {
   const { data: metricas } = useMetricas();
   const [centro, setCentro] = useState<string>('all');
 
-  if (loading) return <Loader label="Cargando datos del modelo..." />;
-  if (error) return <ErrorBox message={error} />;
-  if (!top30) return <ErrorBox message="No se recibieron datos del modelo" />;
-
-  const programas = top30.programas;
+  const programas = top30?.programas ?? [];
   const centros = useMemo(() => uniqueCentros(programas), [programas]);
   const filtrado = centro !== 'all';
   const filtrados = useMemo(
     () => (filtrado ? programas.filter((p) => (p.centro ?? 'Sin clasificar') === centro) : programas),
     [programas, centro, filtrado],
   );
+
+  if (loading) return <Loader label="Cargando datos del modelo..." />;
+  if (error) return <ErrorBox message={error} />;
+  if (!top30) return <ErrorBox message="No se recibieron datos del modelo" />;
 
   return (
     <div className="dashboard">
