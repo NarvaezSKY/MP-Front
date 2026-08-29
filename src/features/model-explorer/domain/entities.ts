@@ -1,4 +1,4 @@
-export type FuenteProbabilidad = 'prediccion_historica' | 'estimacion_similitud';
+export type FuenteProbabilidad = 'prediccion_historica';
 
 export interface Programa {
   codigoPrograma: number;

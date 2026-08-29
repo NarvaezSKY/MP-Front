@@ -162,16 +162,6 @@ body {
   font-size: 12px;
 }
 
-.tag--prediccion_historica {
-  background: rgba(57, 169, 0, 0.15);
-  color: #2f7d00;
-}
-
-.tag--estimacion_similitud {
-  background: rgba(249, 156, 0, 0.18);
-  color: #b97600;
-}
-
 .btn {
   background: var(--accent);
   color: #fff;
@@ -370,10 +360,14 @@ body {
 }
 
 .topbar__logo--cmr {
-  height: 34px;
-  background: #fff;
-  padding: 5px 8px;
+  height: 50px;
+  width: auto;
+  background: #003876;
+  padding: 6px 10px;
   border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  object-fit: contain;
+  display: block;
 }
 
 .topbar__titles {

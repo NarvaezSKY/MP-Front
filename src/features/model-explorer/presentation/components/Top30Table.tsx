@@ -5,10 +5,6 @@ interface Props {
   programas: Programa[];
 }
 
-function fuenteLabel(f: Programa['fuente']) {
-  return f === 'prediccion_historica' ? 'Historia' : 'Similitud';
-}
-
 export function Top30Table({ programas }: Props) {
   return (
     <Card title="Tabla detallada - Top 30 programas">
@@ -23,7 +19,6 @@ export function Top30Table({ programas }: Props) {
               <th>Nivel</th>
               <th>Red</th>
               <th>Prob. éxito</th>
-              <th>Origen</th>
             </tr>
           </thead>
           <tbody>
@@ -36,12 +31,9 @@ export function Top30Table({ programas }: Props) {
                 <td>{p.nivel ?? '—'}</td>
                 <td>{p.redConocimiento ?? '—'}</td>
                 <td>
-                  <span className="badge">{(p.probabilidadExito * 100).toFixed(1)}%</span>
-                </td>
-                <td>
-                  <span className={`tag tag--${p.fuente}`}>{fuenteLabel(p.fuente)}</span>
-                </td>
-              </tr>
+                <span className="badge">{(p.probabilidadExito * 100).toFixed(1)}%</span>
+              </td>
+            </tr>
             ))}
           </tbody>
         </table>

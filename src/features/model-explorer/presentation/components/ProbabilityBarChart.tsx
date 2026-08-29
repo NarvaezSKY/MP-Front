@@ -26,7 +26,6 @@ export function ProbabilityBarChart({ programas }: Props) {
     .map((p) => ({
       name: p.prfDenominacion ?? `Código ${p.codigoPrograma}`,
       prob: +(p.probabilidadExito * 100).toFixed(1),
-      fuente: p.fuente,
     }));
 
   return (
@@ -50,8 +49,8 @@ export function ProbabilityBarChart({ programas }: Props) {
             />
             <Tooltip formatter={(v: number) => `${v}%`} />
             <Bar dataKey="prob" radius={[0, 4, 4, 0]} barSize={18}>
-              {data.map((d, i) => (
-                <Cell key={i} fill={d.fuente === 'estimacion_similitud' ? '#f99c00' : COLOR} />
+              {data.map((_, i) => (
+                <Cell key={i} fill={COLOR} />
               ))}
               <LabelList
                 dataKey="prob"
@@ -65,7 +64,7 @@ export function ProbabilityBarChart({ programas }: Props) {
         </ResponsiveContainer>
       </div>
       <p className="chart-note">
-        Verde = predicción con historia · Amarillo = estimación por similitud
+        Verde = predicción del modelo (calibrada)
       </p>
     </Card>
   );

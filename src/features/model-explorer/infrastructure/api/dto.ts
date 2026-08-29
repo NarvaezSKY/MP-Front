@@ -6,7 +6,7 @@ export interface ApiPrograma {
   'APUESTAS PRIORITARIAS': string | null;
   CENTRO: string | null;
   probabilidad_exito: number;
-  fuente: 'prediccion_historica' | 'estimacion_similitud';
+  fuente: 'prediccion_historica';
 }
 
 export interface ApiTop30 {

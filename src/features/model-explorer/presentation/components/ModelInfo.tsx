@@ -26,25 +26,7 @@ export function ModelInfo() {
         </section>
 
         <section>
-          <h4>3. "Historia" vs "Similitud"</h4>
-          <ul>
-            <li>
-              <span className="tag tag--prediccion_historica">Historia</span> El programa tiene fichas
-              anteriores en el histórico, así que la probabilidad la calcula el{' '}
-              <strong>modelo</strong> con sus datos reales. Es la predicción más fiable.
-            </li>
-            <li>
-              <span className="tag tag--estimacion_similitud">Similitud</span> El programa{' '}
-              <strong>no tiene historia</strong> previa, por lo que su probabilidad se{' '}
-              <strong>estima</strong> con el promedio de los programas de la misma{' '}
-              <em>Red de Conocimiento</em> y <em>Nivel</em>. Es una aproximación, no una predicción
-              del modelo.
-            </li>
-          </ul>
-        </section>
-
-        <section>
-          <h4>4. Limitación</h4>
+          <h4>3. Limitación</h4>
           <p>
             El objetivo es ejecución vs cancelación; <strong>no</strong> "cumple el mínimo de
             inscritos" (ese dato no está en el histórico). Si se cuenta con cupo/meta de matriculados,

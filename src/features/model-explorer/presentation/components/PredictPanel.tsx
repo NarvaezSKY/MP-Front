@@ -119,7 +119,6 @@ function PredictResultTable({ resultados }: { resultados: Programa[] }) {
             <th>Programa</th>
             <th>Centro</th>
             <th>Prob. éxito</th>
-            <th>Origen</th>
           </tr>
         </thead>
         <tbody>
@@ -130,11 +129,6 @@ function PredictResultTable({ resultados }: { resultados: Programa[] }) {
               <td>{p.centro ?? '—'}</td>
               <td>
                 <span className="badge">{(p.probabilidadExito * 100).toFixed(1)}%</span>
-              </td>
-              <td>
-                <span className={`tag tag--${p.fuente}`}>
-                  {p.fuente === 'prediccion_historica' ? 'Historia' : 'Similitud'}
-                </span>
               </td>
             </tr>
           ))}

@@ -4,7 +4,6 @@ import { useMetricas, useTop30 } from './hooks/use-model-data';
 import { StatCards } from './components/StatCards';
 import { ProbabilityBarChart } from './components/ProbabilityBarChart';
 import { CentroBarChart, RedBarChart } from './components/DistributionCharts';
-import { FuentePieChart } from './components/FuentePieChart';
 import { Top30Table } from './components/Top30Table';
 import { PredictPanel } from './components/PredictPanel';
 import { CentroFilter, uniqueCentros } from './components/CentroFilter';
@@ -47,10 +46,9 @@ export function ModelExplorerPage() {
 
       <div className="grid grid--2">
         <CentroBarChart programas={programas} />
-        <FuentePieChart programas={filtrados} />
+        <RedBarChart programas={filtrados} />
       </div>
 
-      <RedBarChart programas={filtrados} />
       <ProbabilityBarChart programas={filtrados} />
       <Top30Table programas={filtrados} />
       <PredictPanel programas={programas} />
