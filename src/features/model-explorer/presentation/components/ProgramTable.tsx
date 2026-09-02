@@ -44,7 +44,7 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
           </thead>
           <tbody>
             {programas.map((p, i) => (
-              <tr key={p.codigoPrograma}>
+              <tr key={`${p.codigoPrograma}-${p.centro}`}>
                 <td>{from + i}</td>
                 <td>{p.codigoPrograma}</td>
                 <td>{p.prfDenominacion ?? '—'}</td>
