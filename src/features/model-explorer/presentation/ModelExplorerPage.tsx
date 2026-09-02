@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { ErrorBox, Loader } from '@/shared/ui/Card';
-import { useMetricas } from './hooks/use-model-data';
 import { usePrograms } from './hooks/use-programs';
 import { useUltimaOferta } from './hooks/use-ultima-oferta';
 import { StatCards } from './components/StatCards';
@@ -14,7 +13,6 @@ import { ModelInfo } from './components/ModelInfo';
 
 export function ModelExplorerPage() {
   const { programas, loading, error, reload } = usePrograms();
-  const { data: metricas } = useMetricas();
   const ultimaOferta = useUltimaOferta();
   const [seleccion, setSeleccion] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,7 +68,7 @@ export function ModelExplorerPage() {
         onClear={() => setSeleccion([])}
       />
 
-      <StatCards metricas={metricas} programas={filtrados} filtrado={filtrado} />
+      <StatCards programas={filtrados} filtrado={filtrado} />
 
       <UltimaOfertaPanel
         data={ultimaOferta.data}

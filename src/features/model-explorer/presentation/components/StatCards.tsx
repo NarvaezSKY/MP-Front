@@ -1,13 +1,12 @@
 import { Card } from '@/shared/ui/Card';
-import type { Metricas, Programa } from '../../domain/entities';
+import type { Programa } from '../../domain/entities';
 
 interface Props {
-  metricas: Metricas | null;
   programas: Programa[];
   filtrado: boolean;
 }
 
-export function StatCards({ metricas, programas, filtrado }: Props) {
+export function StatCards({ programas, filtrado }: Props) {
   const total = programas.length;
   const centros = new Set(programas.map((p) => p.centro ?? 'Sin clasificar')).size;
   const promedio =
@@ -26,11 +25,6 @@ export function StatCards({ metricas, programas, filtrado }: Props) {
       label: 'Prob. promedio',
       value: promedio !== null ? `${(promedio * 100).toFixed(1)}%` : '—',
       hint: filtrado ? 'Sobre selección' : 'Modelo calibrado',
-    },
-    {
-      label: 'Prob. base (mayoria)',
-      value: metricas ? `${(metricas.probabilidadBase * 100).toFixed(1)}%` : '—',
-      hint: 'Linea base trivial',
     },
   ];
 
