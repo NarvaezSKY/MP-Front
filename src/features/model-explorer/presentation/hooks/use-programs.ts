@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { modelRepository } from '../../infrastructure/composition-root';
 import { getPrograms } from '../../application/usecases';
-import type { Programa, ProgramasResponse } from '../../domain/entities';
+import type { ProgramasResponse } from '../../domain/entities';
 import { errorMessage } from './use-model-data';
-
-const PER_PAGE = 30;
 
 interface AsyncState<T> {
   data: T | null;
@@ -18,7 +16,6 @@ export function usePrograms() {
     loading: true,
     error: null,
   });
-  const [currentPage, setCurrentPage] = useState(1);
 
   const load = () => {
     setState((s) => ({ ...s, loading: true, error: null }));
@@ -31,25 +28,9 @@ export function usePrograms() {
 
   useEffect(load, []);
 
-  const allProgramas: Programa[] = state.data?.programas ?? [];
-  const total = state.data?.total ?? allProgramas.length;
-  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
-
-  const safePage = Math.min(currentPage, totalPages);
-  const pageProgramas: Programa[] = useMemo(
-    () => allProgramas.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE),
-    [allProgramas, safePage],
-  );
-
-  const goToPage = (page: number) => setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-
   return {
-    allProgramas,
-    pageProgramas,
-    total,
-    totalPages,
-    currentPage: safePage,
-    goToPage,
+    programas: state.data?.programas ?? [],
+    total: state.data?.total ?? 0,
     loading: state.loading,
     error: state.error,
     reload: load,

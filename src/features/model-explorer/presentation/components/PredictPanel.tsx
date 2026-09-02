@@ -8,15 +8,25 @@ interface Props {
 }
 
 export function PredictPanel({ programas }: Props) {
-  const opciones = useMemo(
-    () =>
-      [...programas]
-        .filter((p) => p.prfDenominacion)
-        .sort((a, b) =>
-          (a.prfDenominacion ?? '').localeCompare(b.prfDenominacion ?? ''),
-        ),
-    [programas],
-  );
+  const opciones = useMemo(() => {
+    const seen = new Set<number>();
+    return [...programas]
+      .filter((p) => p.prfDenominacion)
+      .filter((p) => {
+        if (seen.has(p.codigoPrograma)) return false;
+        seen.add(p.codigoPrograma);
+        return true;
+      })
+      .sort((a, b) =>
+        (a.prfDenominacion ?? '').localeCompare(b.prfDenominacion ?? ''),
+      );
+  }, [programas]);
+
+  const centrosPorCodigo = useMemo(() => {
+    const m = new Map<number, number>();
+    for (const p of programas) m.set(p.codigoPrograma, (m.get(p.codigoPrograma) ?? 0) + 1);
+    return m;
+  }, [programas]);
 
   const [query, setQuery] = useState('');
   const [seleccionados, setSeleccionados] = useState<number[]>([]);
@@ -78,7 +88,9 @@ export function PredictPanel({ programas }: Props) {
                     }}
                   >
                     <span>{p.prfDenominacion}</span>
-                    <span className="combobox__codigo">#{p.codigoPrograma}</span>
+                    <span className="combobox__codigo">
+                      #{p.codigoPrograma} · {centrosPorCodigo.get(p.codigoPrograma) ?? 1} centros
+                    </span>
                   </button>
                 </li>
               ))}
@@ -110,6 +122,14 @@ export function PredictPanel({ programas }: Props) {
 }
 
 function PredictResultTable({ resultados }: { resultados: Programa[] }) {
+  const mejores = new Map<number, number>();
+  for (const p of resultados) {
+    const actual = mejores.get(p.codigoPrograma);
+    if (actual === undefined || p.probabilidadExito > actual) {
+      mejores.set(p.codigoPrograma, p.probabilidadExito);
+    }
+  }
+
   return (
     <div className="table-scroll">
       <table className="data-table">
@@ -123,10 +143,16 @@ function PredictResultTable({ resultados }: { resultados: Programa[] }) {
         </thead>
         <tbody>
           {resultados.map((p) => (
-            <tr key={p.codigoPrograma}>
+            <tr key={`${p.codigoPrograma}-${p.centro}`}>
               <td>{p.codigoPrograma}</td>
               <td>{p.prfDenominacion ?? '—'}</td>
-              <td>{p.centro ?? '—'}</td>
+              <td>
+                {p.centro ?? '—'}
+                {mejores.get(p.codigoPrograma) === p.probabilidadExito &&
+                  resultados.filter((r) => r.codigoPrograma === p.codigoPrograma).length > 1 && (
+                    <span className="tag tag--mejor">mayor proyección</span>
+                  )}
+              </td>
               <td>
                 <span className="badge">{(p.probabilidadExito * 100).toFixed(1)}%</span>
               </td>

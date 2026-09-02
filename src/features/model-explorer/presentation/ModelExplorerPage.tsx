@@ -11,27 +11,37 @@ import { CentroFilter, uniqueCentros } from './components/CentroFilter';
 import { ModelInfo } from './components/ModelInfo';
 
 export function ModelExplorerPage() {
-  const {
-    allProgramas,
-    pageProgramas,
-    total,
-    totalPages,
-    currentPage,
-    goToPage,
-    loading,
-    error,
-    reload,
-  } = usePrograms();
+  const { programas, loading, error, reload } = usePrograms();
   const { data: metricas } = useMetricas();
-  const [centro, setCentro] = useState<string>('all');
+  const [seleccion, setSeleccion] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const programas = allProgramas;
   const centros = useMemo(() => uniqueCentros(programas), [programas]);
-  const filtrado = centro !== 'all';
+  const filtrado = seleccion.length > 0;
   const filtrados = useMemo(
-    () => (filtrado ? programas.filter((p) => (p.centro ?? 'Sin clasificar') === centro) : programas),
-    [programas, centro, filtrado],
+    () =>
+      filtrado
+        ? programas.filter((p) =>
+            seleccion.includes(p.centro ?? 'Sin clasificar'),
+          )
+        : programas,
+    [programas, seleccion, filtrado],
   );
+
+  const PER_PAGE = 30;
+  const totalPages = Math.max(1, Math.ceil(filtrados.length / PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const pageProgramas = filtrados.slice(
+    (safePage - 1) * PER_PAGE,
+    safePage * PER_PAGE,
+  );
+  const goToPage = (page: number) =>
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+
+  const toggleCentro = (c: string) =>
+    setSeleccion((prev) =>
+      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
+    );
 
   if (loading) return <Loader label="Cargando datos del modelo..." />;
   if (error) return <ErrorBox message={error} />;
@@ -50,7 +60,12 @@ export function ModelExplorerPage() {
         </button>
       </div>
 
-      <CentroFilter centros={centros} value={centro} onChange={setCentro} />
+      <CentroFilter
+        centros={centros}
+        seleccion={seleccion}
+        onToggle={toggleCentro}
+        onClear={() => setSeleccion([])}
+      />
 
       <StatCards metricas={metricas} programas={filtrados} filtrado={filtrado} />
 
@@ -62,9 +77,9 @@ export function ModelExplorerPage() {
       <ProbabilityBarChart programas={filtrados} />
       <ProgramTable
         programas={pageProgramas}
-        currentPage={currentPage}
+        currentPage={safePage}
         totalPages={totalPages}
-        total={total}
+        total={filtrados.length}
         goToPage={goToPage}
       />
       <PredictPanel programas={programas} />

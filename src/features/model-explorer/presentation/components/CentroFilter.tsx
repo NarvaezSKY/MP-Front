@@ -2,36 +2,34 @@ import type { Programa } from '../../domain/entities';
 
 interface Props {
   centros: string[];
-  value: string;
-  onChange: (centro: string) => void;
+  seleccion: string[];
+  onToggle: (centro: string) => void;
+  onClear: () => void;
 }
 
-export function CentroFilter({ centros, value, onChange }: Props) {
+export function CentroFilter({ centros, seleccion, onToggle, onClear }: Props) {
   return (
     <div className="filter-bar">
-      <label className="filter-bar__label" htmlFor="centro-filter">
-        Centro de formación
-      </label>
-      <select
-        id="centro-filter"
-        className="filter-bar__select"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option value="all">Todos los centros</option>
-        {centros.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
-      {value !== 'all' && (
-        <button
-          type="button"
-          className="filter-bar__clear"
-          onClick={() => onChange('all')}
-        >
-          Limpiar
+      <label className="filter-bar__label">Centro de formación</label>
+      <div className="filter-bar__chips">
+        {centros.map((c) => {
+          const activo = seleccion.includes(c);
+          return (
+            <button
+              key={c}
+              type="button"
+              className={`centro-chip${activo ? ' centro-chip--active' : ''}`}
+              onClick={() => onToggle(c)}
+              aria-pressed={activo}
+            >
+              {c}
+            </button>
+          );
+        })}
+      </div>
+      {seleccion.length > 0 && (
+        <button type="button" className="filter-bar__clear" onClick={onClear}>
+          Limpiar ({seleccion.length})
         </button>
       )}
     </div>

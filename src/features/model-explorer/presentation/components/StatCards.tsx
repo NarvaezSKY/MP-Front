@@ -17,9 +17,9 @@ export function StatCards({ metricas, programas, filtrado }: Props) {
 
   const items = [
     {
-      label: 'Programas en vista',
+      label: 'Filas en vista',
       value: total,
-      hint: filtrado ? 'Filtrado por centro' : 'Catálogo TITULADA (244)',
+      hint: filtrado ? 'Filtrado por centro (prog×centro)' : 'Programas × centro ofertado',
     },
     { label: 'Centros', value: centros, hint: 'Regional Cauca' },
     {
