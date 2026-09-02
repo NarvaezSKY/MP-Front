@@ -410,10 +410,10 @@ body {
 }
 
 .topbar__logo--cmr {
-  height: 50px;
+  height: 80px;
   width: auto;
   background: #003876;
-  padding: 6px 10px;
+  padding: 8px 14px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   object-fit: contain;
