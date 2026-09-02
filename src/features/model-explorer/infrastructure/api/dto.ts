@@ -15,6 +15,11 @@ export interface ApiTop30 {
   programas: ApiPrograma[];
 }
 
+export interface ApiProgramasResponse {
+  total: number;
+  programas: ApiPrograma[];
+}
+
 export interface ApiMetricas {
   programas_con_historia: number;
   probabilidad_promedio: number;

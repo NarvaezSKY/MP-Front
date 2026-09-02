@@ -17,6 +17,11 @@ export interface Top30Response {
   programas: Programa[];
 }
 
+export interface ProgramasResponse {
+  total: number;
+  programas: Programa[];
+}
+
 export interface Metricas {
   programasConHistoria: number;
   probabilidadPromedio: number;

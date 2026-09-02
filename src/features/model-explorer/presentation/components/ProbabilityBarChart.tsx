@@ -19,17 +19,19 @@ interface Props {
 const COLOR = '#39a900';
 const ROW_H = 30;
 const SCROLL_MAX_H = 420;
+const TOP_N = 30;
 
 export function ProbabilityBarChart({ programas }: Props) {
   const data = [...programas]
     .sort((a, b) => b.probabilidadExito - a.probabilidadExito)
+    .slice(0, TOP_N)
     .map((p) => ({
       name: p.prfDenominacion ?? `Código ${p.codigoPrograma}`,
       prob: +(p.probabilidadExito * 100).toFixed(1),
     }));
 
   return (
-    <Card title="Probabilidad de éxito por programa (Top 30)">
+    <Card title={`Probabilidad de éxito por programa (Top ${Math.min(TOP_N, data.length)} de ${programas.length})`}>
       <div className="chart-scroll" style={{ maxHeight: SCROLL_MAX_H }}>
         <ResponsiveContainer width="100%" height={Math.max(SCROLL_MAX_H, data.length * ROW_H)}>
           <BarChart

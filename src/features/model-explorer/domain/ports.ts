@@ -3,6 +3,7 @@ import type {
   Metricas,
   PredictionRequest,
   Programa,
+  ProgramasResponse,
   Top30Response,
 } from './entities';
 
@@ -13,6 +14,7 @@ import type {
 export interface ModelRepository {
   getHealth(): Promise<HealthStatus>;
   getTop30(): Promise<Top30Response>;
+  getPrograms(): Promise<ProgramasResponse>;
   getMetricas(): Promise<Metricas>;
   predict(request: PredictionRequest): Promise<Programa[]>;
 }

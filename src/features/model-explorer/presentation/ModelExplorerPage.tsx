@@ -1,20 +1,31 @@
 import { useMemo, useState } from 'react';
 import { ErrorBox, Loader } from '@/shared/ui/Card';
-import { useMetricas, useTop30 } from './hooks/use-model-data';
+import { useMetricas } from './hooks/use-model-data';
+import { usePrograms } from './hooks/use-programs';
 import { StatCards } from './components/StatCards';
 import { ProbabilityBarChart } from './components/ProbabilityBarChart';
 import { CentroBarChart, RedBarChart } from './components/DistributionCharts';
-import { Top30Table } from './components/Top30Table';
+import { ProgramTable } from './components/ProgramTable';
 import { PredictPanel } from './components/PredictPanel';
 import { CentroFilter, uniqueCentros } from './components/CentroFilter';
 import { ModelInfo } from './components/ModelInfo';
 
 export function ModelExplorerPage() {
-  const { data: top30, loading, error, reload } = useTop30();
+  const {
+    allProgramas,
+    pageProgramas,
+    total,
+    totalPages,
+    currentPage,
+    goToPage,
+    loading,
+    error,
+    reload,
+  } = usePrograms();
   const { data: metricas } = useMetricas();
   const [centro, setCentro] = useState<string>('all');
 
-  const programas = top30?.programas ?? [];
+  const programas = allProgramas;
   const centros = useMemo(() => uniqueCentros(programas), [programas]);
   const filtrado = centro !== 'all';
   const filtrados = useMemo(
@@ -24,7 +35,6 @@ export function ModelExplorerPage() {
 
   if (loading) return <Loader label="Cargando datos del modelo..." />;
   if (error) return <ErrorBox message={error} />;
-  if (!top30) return <ErrorBox message="No se recibieron datos del modelo" />;
 
   return (
     <div className="dashboard">
@@ -50,7 +60,13 @@ export function ModelExplorerPage() {
       </div>
 
       <ProbabilityBarChart programas={filtrados} />
-      <Top30Table programas={filtrados} />
+      <ProgramTable
+        programas={pageProgramas}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        total={total}
+        goToPage={goToPage}
+      />
       <PredictPanel programas={programas} />
       <footer className="dashboard__footer">
         <ModelInfo />

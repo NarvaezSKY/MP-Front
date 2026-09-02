@@ -5,6 +5,7 @@ import type {
   Metricas,
   PredictionRequest,
   Programa,
+  ProgramasResponse,
   Top30Response,
 } from '../../domain/entities';
 import type {
@@ -13,6 +14,7 @@ import type {
   ApiPredictRequest,
   ApiPredictResponse,
   ApiPrograma,
+  ApiProgramasResponse,
   ApiTop30,
 } from './dto';
 
@@ -49,6 +51,14 @@ export class ModelApiAdapter implements ModelRepository {
     return {
       total: data.total,
       centros: data.centros,
+      programas: data.programas.map(mapPrograma),
+    };
+  }
+
+  async getPrograms(): Promise<ProgramasResponse> {
+    const { data } = await httpClient.get<ApiProgramasResponse>('/programs');
+    return {
+      total: data.total,
       programas: data.programas.map(mapPrograma),
     };
   }

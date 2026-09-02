@@ -19,7 +19,7 @@ export function StatCards({ metricas, programas, filtrado }: Props) {
     {
       label: 'Programas en vista',
       value: total,
-      hint: filtrado ? 'Filtrado por centro' : 'Top 30 (10 x centro)',
+      hint: filtrado ? 'Filtrado por centro' : 'Catálogo TITULADA (244)',
     },
     { label: 'Centros', value: centros, hint: 'Regional Cauca' },
     {
