@@ -1,6 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Card } from '@/shared/ui/Card';
 import type { FichaOferta } from '../../domain/entities';
+
+const PER_PAGE = 10;
+
+function pageNumbers(current: number, total: number): (number | '…')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | '…')[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  if (start > 2) pages.push('…');
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (end < total - 1) pages.push('…');
+  pages.push(total);
+  return pages;
+}
 
 interface Props {
   data: {
@@ -39,6 +53,7 @@ function probColor(p: number | null): string {
 
 export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>('ocupacion');
+  const [page, setPage] = useState(1);
 
   const publicadas = useMemo(
     () => (data?.fichas ?? []).filter((f) => f.estado === 'Publicada'),
@@ -77,6 +92,15 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
       ).length,
     [publicadas],
   );
+
+  const totalPages = Math.max(1, Math.ceil(ordenadas.length / PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const pageRows = ordenadas.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
+  const goToPage = (p: number) => setPage(Math.max(1, Math.min(p, totalPages)));
+
+  useEffect(() => {
+    setPage(1);
+  }, [sortKey, publicadas.length]);
 
   if (loading) return <Card title="Predicción de la última oferta"><p className="loader-light">Cargando inscripciones…</p></Card>;
   if (error) return <Card title="Predicción de la última oferta"><div className="error-box">{error} <button className="btn" onClick={reload}>Reintentar</button></div></Card>;
@@ -126,7 +150,7 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
             </tr>
           </thead>
           <tbody>
-            {ordenadas.map((f) => (
+            {pageRows.map((f) => (
               <tr key={f.codFicha}>
                 <td>{f.denominacion}</td>
                 <td>{f.centro}</td>
@@ -154,6 +178,46 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
           </tbody>
         </table>
       </div>
+
+      <div className="pagination">
+        <button
+          className="pagination__btn"
+          onClick={() => goToPage(safePage - 1)}
+          disabled={safePage <= 1}
+          aria-label="Página anterior"
+        >
+          ‹
+        </button>
+        {pageNumbers(safePage, totalPages).map((p, i) =>
+          p === '…' ? (
+            <span key={`dots-${i}`} className="pagination__dots">
+              …
+            </span>
+          ) : (
+            <button
+              key={p}
+              className={`pagination__btn${p === safePage ? ' pagination__btn--active' : ''}`}
+              onClick={() => goToPage(p)}
+              aria-current={p === safePage ? 'page' : undefined}
+            >
+              {p}
+            </button>
+          ),
+        )}
+        <button
+          className="pagination__btn"
+          onClick={() => goToPage(safePage + 1)}
+          disabled={safePage >= totalPages}
+          aria-label="Página siguiente"
+        >
+          ›
+        </button>
+        <span className="pagination__info">
+          Mostrando {pageRows.length ? `${(safePage - 1) * PER_PAGE + 1}–${(safePage - 1) * PER_PAGE + pageRows.length}` : '0'} de{' '}
+          {ordenadas.length} programas publicados
+        </span>
+      </div>
+
       <p className="chart-note">
         Verde esquema: el contraste entre <strong>probabilidad del modelo</strong> y{' '}
         <strong>ocupación actual</strong> anticipa el resultado: prob. baja + ocupación baja ⇒ alta

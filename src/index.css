@@ -8,6 +8,7 @@
   --accent-2: #003876;
   --warn: #f99c00;
   --accent-dark: #2f7d00;
+  --space-y: 20px;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -54,17 +55,30 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
-  margin-bottom: 18px;
+  margin-bottom: var(--space-y);
 }
 
 .grid {
   display: grid;
   gap: 14px;
-  margin-bottom: 14px;
+  margin-bottom: var(--space-y);
 }
 
 .grid--2 {
   grid-template-columns: 1fr 1fr;
+}
+
+/* Espaciado vertical estandarizado entre bloques/gráficos del dashboard */
+.dashboard > .card,
+.dashboard > .grid,
+.dashboard > .stat-cards {
+  margin-bottom: var(--space-y);
+}
+
+.dashboard > .card:last-child,
+.dashboard > .grid:last-child,
+.dashboard > .stat-cards:last-child {
+  margin-bottom: 0;
 }
 
 .card {
@@ -273,7 +287,7 @@ body {
   border: 1px solid #d7e4da;
   border-radius: 12px;
   padding: 12px 16px;
-  margin-bottom: 18px;
+  margin-bottom: var(--space-y);
   box-shadow: 0 2px 8px rgba(22, 50, 31, 0.08);
 }
 
