@@ -519,3 +519,102 @@ body {
   font-size: 12px;
   color: var(--muted);
 }
+
+/* ── Panel: Predicción de la última oferta ── */
+.loader-light {
+  color: var(--muted);
+  padding: 12px 0;
+}
+
+.ultima-oferta__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.ultima-oferta__riesgo {
+  color: #b97600;
+  font-weight: 600;
+}
+
+.ultima-oferta__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ultima-oferta__label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.ultima-oferta__toolbar .filter-bar__select {
+  max-width: 300px;
+}
+
+.ocup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ocup__bar {
+  flex: 1;
+  min-width: 80px;
+  height: 8px;
+  background: var(--panel-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ocup__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.ocup__fill--critico {
+  background: #e05656;
+}
+
+.ocup__fill--bajo {
+  background: #f99c00;
+}
+
+.ocup__fill--medio {
+  background: #39a900;
+}
+
+.ocup__fill--alto {
+  background: #003876;
+}
+
+.ocup__val {
+  width: 42px;
+  text-align: right;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.badge--sin-dato {
+  background: #d7e4da;
+  color: #5a7361;
+}
+
+.badge--bajo {
+  background: #e05656;
+  color: #fff;
+}
+
+.badge--medio {
+  background: #f99c00;
+  color: #fff;
+}
+
+.badge--alto {
+  background: var(--accent);
+  color: #fff;
+}

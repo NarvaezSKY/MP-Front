@@ -2,17 +2,20 @@ import { useMemo, useState } from 'react';
 import { ErrorBox, Loader } from '@/shared/ui/Card';
 import { useMetricas } from './hooks/use-model-data';
 import { usePrograms } from './hooks/use-programs';
+import { useUltimaOferta } from './hooks/use-ultima-oferta';
 import { StatCards } from './components/StatCards';
 import { ProbabilityBarChart } from './components/ProbabilityBarChart';
 import { CentroBarChart, RedBarChart } from './components/DistributionCharts';
 import { ProgramTable } from './components/ProgramTable';
 import { PredictPanel } from './components/PredictPanel';
+import { UltimaOfertaPanel } from './components/UltimaOfertaPanel';
 import { CentroFilter, uniqueCentros } from './components/CentroFilter';
 import { ModelInfo } from './components/ModelInfo';
 
 export function ModelExplorerPage() {
   const { programas, loading, error, reload } = usePrograms();
   const { data: metricas } = useMetricas();
+  const ultimaOferta = useUltimaOferta();
   const [seleccion, setSeleccion] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -68,6 +71,13 @@ export function ModelExplorerPage() {
       />
 
       <StatCards metricas={metricas} programas={filtrados} filtrado={filtrado} />
+
+      <UltimaOfertaPanel
+        data={ultimaOferta.data}
+        loading={ultimaOferta.loading}
+        error={ultimaOferta.error}
+        reload={ultimaOferta.reload}
+      />
 
       <div className="grid grid--2">
         <CentroBarChart programas={programas} />

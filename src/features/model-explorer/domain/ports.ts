@@ -5,6 +5,7 @@ import type {
   Programa,
   ProgramasResponse,
   Top30Response,
+  UltimaOfertaResponse,
 } from './entities';
 
 /**
@@ -17,4 +18,5 @@ export interface ModelRepository {
   getPrograms(): Promise<ProgramasResponse>;
   getMetricas(): Promise<Metricas>;
   predict(request: PredictionRequest): Promise<Programa[]>;
+  getUltimaOferta(): Promise<UltimaOfertaResponse>;
 }

@@ -40,3 +40,28 @@ export interface ApiPredictResponse {
 export interface ApiPredictRequest {
   codigos: number[];
 }
+
+export interface ApiFichaOferta {
+  cod_ficha: number;
+  codigo_programa: number;
+  denominacion: string;
+  centro: string;
+  municipio: string;
+  nivel: string;
+  jornada: string;
+  estado: string;
+  cupo: number;
+  inscritos: number;
+  ocupacion: number;
+  probabilidad_exito: number | null;
+}
+
+export interface ApiUltimaOferta {
+  archivo: string;
+  total_fichas: number;
+  publicadas: number;
+  canceladas: number;
+  con_probabilidad: number;
+  ocupacion_promedio: number;
+  fichas: ApiFichaOferta[];
+}

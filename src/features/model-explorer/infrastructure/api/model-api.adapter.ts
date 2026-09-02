@@ -1,14 +1,17 @@
 import { httpClient } from '@/shared/http/axios-client';
 import type { ModelRepository } from '../../domain/ports';
 import type {
+  FichaOferta,
   HealthStatus,
   Metricas,
   PredictionRequest,
   Programa,
   ProgramasResponse,
   Top30Response,
+  UltimaOfertaResponse,
 } from '../../domain/entities';
 import type {
+  ApiFichaOferta,
   ApiHealth,
   ApiMetricas,
   ApiPredictRequest,
@@ -16,6 +19,7 @@ import type {
   ApiPrograma,
   ApiProgramasResponse,
   ApiTop30,
+  ApiUltimaOferta,
 } from './dto';
 
 function mapPrograma(d: ApiPrograma): Programa {
@@ -28,6 +32,23 @@ function mapPrograma(d: ApiPrograma): Programa {
     centro: d.CENTRO ?? null,
     probabilidadExito: Number(d.probabilidad_exito),
     fuente: d.fuente,
+  };
+}
+
+function mapFicha(d: ApiFichaOferta): FichaOferta {
+  return {
+    codFicha: Number(d.cod_ficha),
+    codigoPrograma: Number(d.codigo_programa),
+    denominacion: d.denominacion,
+    centro: d.centro,
+    municipio: d.municipio,
+    nivel: d.nivel,
+    jornada: d.jornada,
+    estado: d.estado,
+    cupo: Number(d.cupo),
+    inscritos: Number(d.inscritos),
+    ocupacion: Number(d.ocupacion),
+    probabilidadExito: d.probabilidad_exito === null ? null : Number(d.probabilidad_exito),
   };
 }
 
@@ -69,6 +90,19 @@ export class ModelApiAdapter implements ModelRepository {
       programasConHistoria: data.programas_con_historia,
       probabilidadPromedio: data.probabilidad_promedio,
       probabilidadBase: data.probabilidad_base,
+    };
+  }
+
+  async getUltimaOferta(): Promise<UltimaOfertaResponse> {
+    const { data } = await httpClient.get<ApiUltimaOferta>('/ultima-oferta');
+    return {
+      archivo: data.archivo,
+      totalFichas: data.total_fichas,
+      publicadas: data.publicadas,
+      canceladas: data.canceladas,
+      conProbabilidad: data.con_probabilidad,
+      ocupacionPromedio: data.ocupacion_promedio,
+      fichas: data.fichas.map(mapFicha),
     };
   }
 
