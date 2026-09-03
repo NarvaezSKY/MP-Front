@@ -37,6 +37,7 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
               <th>Código</th>
               <th>Programa</th>
               <th>Centro</th>
+              <th>Tipo respuesta</th>
               <th>Nivel</th>
               <th>Red</th>
               <th>Prob. éxito</th>
@@ -44,11 +45,12 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
           </thead>
           <tbody>
             {programas.map((p, i) => (
-              <tr key={`${p.codigoPrograma}-${p.centro}`}>
+              <tr key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}>
                 <td>{from + i}</td>
                 <td>{p.codigoPrograma}</td>
                 <td>{p.prfDenominacion ?? '—'}</td>
                 <td>{p.centro ?? '—'}</td>
+                <td>{p.tipoRespuesta}</td>
                 <td>{p.nivel ?? '—'}</td>
                 <td>{p.redConocimiento ?? '—'}</td>
                 <td>

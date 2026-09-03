@@ -30,6 +30,7 @@ function mapPrograma(d: ApiPrograma): Programa {
     redConocimiento: d['Red de Conocimiento'] ?? null,
     apuestasPrioritarias: d['APUESTAS PRIORITARIAS'] ?? null,
     centro: d.CENTRO ?? null,
+    tipoRespuesta: d.TIPO_RESPUESTA,
     probabilidadExito: Number(d.probabilidad_exito),
     fuente: d.fuente,
   };

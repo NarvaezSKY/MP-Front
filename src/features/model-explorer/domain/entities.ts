@@ -7,6 +7,7 @@ export interface Programa {
   redConocimiento: string | null;
   apuestasPrioritarias: string | null;
   centro: string | null;
+  tipoRespuesta: string;
   probabilidadExito: number;
   fuente: FuenteProbabilidad;
 }

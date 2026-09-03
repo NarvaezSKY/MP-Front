@@ -5,6 +5,7 @@ export interface ApiPrograma {
   'Red de Conocimiento': string | null;
   'APUESTAS PRIORITARIAS': string | null;
   CENTRO: string | null;
+  TIPO_RESPUESTA: string;
   probabilidad_exito: number;
   fuente: 'prediccion_historica';
 }

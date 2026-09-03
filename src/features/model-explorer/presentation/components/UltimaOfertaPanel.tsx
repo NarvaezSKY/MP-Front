@@ -116,6 +116,11 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
         <span className="ultima-oferta__riesgo">En riesgo (prob &lt;55% y ocup &lt;20%): <strong>{enRiesgo}</strong></span>
       </div>
 
+      <p className="chart-note">
+        Probabilidad calculada para oferta <strong>ABIERTA</strong> (la última oferta es de demanda libre):
+        el modelo usa únicamente el historial de ofertas abiertas de cada programa.
+      </p>
+
       {canceladas.length > 0 && (
         <p className="chart-note">
           {canceladas.length} ficha(s) ya fueron canceladas (0 inscritos). Señal de que la baja ocupación anticipa la cancelación.

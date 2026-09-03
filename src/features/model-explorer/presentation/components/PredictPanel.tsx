@@ -138,12 +138,13 @@ function PredictResultTable({ resultados }: { resultados: Programa[] }) {
             <th>Código</th>
             <th>Programa</th>
             <th>Centro</th>
+            <th>Tipo respuesta</th>
             <th>Prob. éxito</th>
           </tr>
         </thead>
         <tbody>
           {resultados.map((p) => (
-            <tr key={`${p.codigoPrograma}-${p.centro}`}>
+            <tr key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}>
               <td>{p.codigoPrograma}</td>
               <td>{p.prfDenominacion ?? '—'}</td>
               <td>
@@ -153,6 +154,7 @@ function PredictResultTable({ resultados }: { resultados: Programa[] }) {
                     <span className="tag tag--mejor">mayor proyección</span>
                   )}
               </td>
+              <td>{p.tipoRespuesta}</td>
               <td>
                 <span className="badge">{(p.probabilidadExito * 100).toFixed(1)}%</span>
               </td>

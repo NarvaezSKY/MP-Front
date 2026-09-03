@@ -9,24 +9,28 @@ import { ProgramTable } from './components/ProgramTable';
 import { PredictPanel } from './components/PredictPanel';
 import { UltimaOfertaPanel } from './components/UltimaOfertaPanel';
 import { CentroFilter, uniqueCentros } from './components/CentroFilter';
+import { TipoFilter, uniqueTipos } from './components/TipoFilter';
 import { ModelInfo } from './components/ModelInfo';
 
 export function ModelExplorerPage() {
   const { programas, loading, error, reload } = usePrograms();
   const ultimaOferta = useUltimaOferta();
   const [seleccion, setSeleccion] = useState<string[]>([]);
+  const [seleccionTipo, setSeleccionTipo] = useState<string[]>(['ABIERTA']);
   const [currentPage, setCurrentPage] = useState(1);
 
   const centros = useMemo(() => uniqueCentros(programas), [programas]);
+  const tipos = useMemo(() => uniqueTipos(programas), [programas]);
   const filtrado = seleccion.length > 0;
+  const filtradoTipo = seleccionTipo.length > 0;
   const filtrados = useMemo(
     () =>
-      filtrado
-        ? programas.filter((p) =>
-            seleccion.includes(p.centro ?? 'Sin clasificar'),
-          )
-        : programas,
-    [programas, seleccion, filtrado],
+      programas.filter(
+        (p) =>
+          (!filtrado || seleccion.includes(p.centro ?? 'Sin clasificar')) &&
+          (!filtradoTipo || seleccionTipo.includes(p.tipoRespuesta)),
+      ),
+    [programas, seleccion, seleccionTipo, filtrado, filtradoTipo],
   );
 
   const PER_PAGE = 30;
@@ -42,6 +46,11 @@ export function ModelExplorerPage() {
   const toggleCentro = (c: string) =>
     setSeleccion((prev) =>
       prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
+    );
+
+  const toggleTipo = (t: string) =>
+    setSeleccionTipo((prev) =>
+      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
     );
 
   if (loading) return <Loader label="Cargando datos del modelo..." />;
@@ -66,6 +75,13 @@ export function ModelExplorerPage() {
         seleccion={seleccion}
         onToggle={toggleCentro}
         onClear={() => setSeleccion([])}
+      />
+
+      <TipoFilter
+        tipos={tipos}
+        seleccion={seleccionTipo}
+        onToggle={toggleTipo}
+        onClear={() => setSeleccionTipo([])}
       />
 
       <StatCards programas={filtrados} filtrado={filtrado} />
