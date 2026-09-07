@@ -22,7 +22,7 @@ export function StatCards({ programas, filtrado }: Props) {
     },
     { label: 'Centros', value: centros, hint: 'Regional Cauca' },
     {
-      label: 'Prob. promedio',
+      label: 'Probabilidad promedio',
       value: promedio !== null ? `${(promedio * 100).toFixed(1)}%` : '—',
       hint: filtrado ? 'Sobre selección' : 'Modelo calibrado',
     },

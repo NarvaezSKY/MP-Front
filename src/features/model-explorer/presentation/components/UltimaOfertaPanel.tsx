@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Card } from '@/shared/ui/Card';
+import { probColor } from '../lib/probability-color';
 import type { FichaOferta } from '../../domain/entities';
 
 const PER_PAGE = 10;
@@ -42,13 +43,6 @@ function ocupacionColor(o: number): string {
 
 function pct(x: number | null): string {
   return x === null ? '—' : `${Math.round(x * 100)}%`;
-}
-
-function probColor(p: number | null): string {
-  if (p === null) return 'sin-dato';
-  if (p < 0.55) return 'bajo';
-  if (p < 0.7) return 'medio';
-  return 'alto';
 }
 
 export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
@@ -110,10 +104,10 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
     <Card title="Predicción de la última oferta (inscripciones)">
       <div className="ultima-oferta__meta">
         <span>Archivo: <strong>{data.archivo}</strong></span>
-        <span>Fichas: <strong>{data.totalFichas}</strong> (publ. {data.publicadas} / canc. {data.canceladas})</span>
-        <span>Con prob. del modelo: <strong>{data.conProbabilidad}</strong></span>
+        <span>Fichas: <strong>{data.totalFichas}</strong> (publicadas {data.publicadas} / canceladas {data.canceladas})</span>
+        <span>Con probabilidad del modelo: <strong>{data.conProbabilidad}</strong></span>
         <span>Ocupación promedio: <strong>{Math.round(data.ocupacionPromedio * 100)}%</strong></span>
-        <span className="ultima-oferta__riesgo">En riesgo (prob &lt;55% y ocup &lt;20%): <strong>{enRiesgo}</strong></span>
+        <span className="ultima-oferta__riesgo">En riesgo (probabilidad &lt;55% y ocupación &lt;20%): <strong>{enRiesgo}</strong></span>
       </div>
 
       <p className="chart-note">
@@ -136,7 +130,7 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
           onChange={(e) => setSortKey(e.target.value as SortKey)}
         >
           <option value="ocupacion">Ocupación (menor primero)</option>
-          <option value="probabilidad">Prob. modelo (menor primero)</option>
+          <option value="probabilidad">Probabilidad del modelo (menor primero)</option>
           <option value="nombre">Programa (A-Z)</option>
         </select>
       </div>
@@ -151,7 +145,7 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
               <th>Cupo</th>
               <th>Inscritos</th>
               <th>Ocupación</th>
-              <th>Prob. modelo</th>
+              <th>Probabilidad del modelo</th>
             </tr>
           </thead>
           <tbody>

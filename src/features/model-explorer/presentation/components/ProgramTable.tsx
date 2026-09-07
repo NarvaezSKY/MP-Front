@@ -1,4 +1,5 @@
 import { Card } from '@/shared/ui/Card';
+import { probColor } from '../lib/probability-color';
 import type { Programa } from '../../domain/entities';
 
 export const PROGRAMS_PER_PAGE = 30;
@@ -40,7 +41,7 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
               <th>Tipo respuesta</th>
               <th>Nivel</th>
               <th>Red</th>
-              <th>Prob. éxito</th>
+              <th>Probabilidad de éxito</th>
             </tr>
           </thead>
           <tbody>
@@ -54,7 +55,9 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
                 <td>{p.nivel ?? '—'}</td>
                 <td>{p.redConocimiento ?? '—'}</td>
                 <td>
-                  <span className="badge">{(p.probabilidadExito * 100).toFixed(1)}%</span>
+                  <span className={`badge badge--${probColor(p.probabilidadExito)}`}>
+                    {(p.probabilidadExito * 100).toFixed(1)}%
+                  </span>
                 </td>
               </tr>
             ))}

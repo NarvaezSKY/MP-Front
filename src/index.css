@@ -426,6 +426,22 @@ body {
   padding: 0 2px;
 }
 
+/* Grupo de resultados de predicción por tipo de oferta */
+.predict-grupo {
+  margin-top: 14px;
+}
+
+.predict-grupo__titulo {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.predict-grupo__titulo strong {
+  text-transform: capitalize;
+  color: var(--accent);
+}
+
 .topbar__logo {
   height: 42px;
   width: auto;

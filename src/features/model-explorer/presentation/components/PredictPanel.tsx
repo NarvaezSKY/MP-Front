@@ -1,10 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '@/shared/ui/Card';
 import { usePredict } from '../hooks/use-predict';
+import { probColor } from '../lib/probability-color';
 import type { Programa } from '../../domain/entities';
 
 interface Props {
   programas: Programa[];
+}
+
+function tipoSection(tipo: string): string {
+  if (tipo.toLowerCase().includes('abiert')) return 'abierta';
+  if (tipo.toLowerCase().includes('cerrad')) return 'cerrada';
+  return tipo.toLowerCase();
 }
 
 export function PredictPanel({ programas }: Props) {
@@ -31,7 +38,28 @@ export function PredictPanel({ programas }: Props) {
   const [query, setQuery] = useState('');
   const [seleccionados, setSeleccionados] = useState<number[]>([]);
   const [abierto, setAbierto] = useState(false);
+  const comboboxRef = useRef<HTMLDivElement>(null);
   const { resultados, loading, error, predict } = usePredict();
+
+  useEffect(() => {
+    if (!abierto) return;
+
+    const onClickOutside = (e: MouseEvent) => {
+      if (comboboxRef.current && !comboboxRef.current.contains(e.target as Node)) {
+        setAbierto(false);
+      }
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setAbierto(false);
+    };
+
+    document.addEventListener('mousedown', onClickOutside);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onClickOutside);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [abierto]);
 
   const sugerencias = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -63,7 +91,7 @@ export function PredictPanel({ programas }: Props) {
   return (
     <Card title="Predecir probabilidad de éxito por programa">
       <form className="predict-form" onSubmit={onSubmit}>
-        <div className="combobox">
+        <div className="combobox" ref={comboboxRef}>
           <input
             className="combobox__input"
             value={query}
@@ -72,7 +100,7 @@ export function PredictPanel({ programas }: Props) {
               setAbierto(true);
             }}
             onFocus={() => setAbierto(true)}
-            placeholder="Busca un programa por nombre (ej. Técnico en Cocina)"
+            placeholder="Busca un programa por nombre (ejemplo: Técnico en Cocina)"
             aria-label="Buscar programa"
           />
           {abierto && sugerencias.length > 0 && (
@@ -89,7 +117,8 @@ export function PredictPanel({ programas }: Props) {
                   >
                     <span>{p.prfDenominacion}</span>
                     <span className="combobox__codigo">
-                      #{p.codigoPrograma} · {centrosPorCodigo.get(p.codigoPrograma) ?? 1} centros
+                      Código {p.codigoPrograma} · {centrosPorCodigo.get(p.codigoPrograma) ?? 1}{' '}
+                      {centrosPorCodigo.get(p.codigoPrograma) === 1 ? 'centro' : 'centros'}
                     </span>
                   </button>
                 </li>
@@ -122,46 +151,88 @@ export function PredictPanel({ programas }: Props) {
 }
 
 function PredictResultTable({ resultados }: { resultados: Programa[] }) {
-  const mejores = new Map<number, number>();
-  for (const p of resultados) {
-    const actual = mejores.get(p.codigoPrograma);
-    if (actual === undefined || p.probabilidadExito > actual) {
-      mejores.set(p.codigoPrograma, p.probabilidadExito);
+  const mejorPorTipoCodigo = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const p of resultados) {
+      const key = `${tipoSection(p.tipoRespuesta)}-${p.codigoPrograma}`;
+      const actual = m.get(key);
+      if (actual === undefined || p.probabilidadExito > actual) {
+        m.set(key, p.probabilidadExito);
+      }
     }
-  }
+    return m;
+  }, [resultados]);
+
+  const grupos = useMemo(() => {
+    const order: Record<string, number> = {
+      abierta: 0,
+      cerrada: 1,
+    };
+    const byTipo = new Map<string, Programa[]>();
+    for (const p of resultados) {
+      const sec = tipoSection(p.tipoRespuesta);
+      const arr = byTipo.get(sec) ?? [];
+      arr.push(p);
+      byTipo.set(sec, arr);
+    }
+    const keys = Array.from(byTipo.keys()).sort(
+      (a, b) => (order[a] ?? 9) - (order[b] ?? 9) || a.localeCompare(b),
+    );
+    return keys.map((k) => ({
+      tipo: k,
+      rows: (byTipo.get(k) ?? []).sort((a, b) => b.probabilidadExito - a.probabilidadExito),
+    }));
+  }, [resultados]);
+
+  if (grupos.length === 0) return null;
 
   return (
-    <div className="table-scroll">
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Programa</th>
-            <th>Centro</th>
-            <th>Tipo respuesta</th>
-            <th>Prob. éxito</th>
-          </tr>
-        </thead>
-        <tbody>
-          {resultados.map((p) => (
-            <tr key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}>
-              <td>{p.codigoPrograma}</td>
-              <td>{p.prfDenominacion ?? '—'}</td>
-              <td>
-                {p.centro ?? '—'}
-                {mejores.get(p.codigoPrograma) === p.probabilidadExito &&
-                  resultados.filter((r) => r.codigoPrograma === p.codigoPrograma).length > 1 && (
-                    <span className="tag tag--mejor">mayor proyección</span>
-                  )}
-              </td>
-              <td>{p.tipoRespuesta}</td>
-              <td>
-                <span className="badge">{(p.probabilidadExito * 100).toFixed(1)}%</span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      {grupos.map((grupo) => (
+        <div key={grupo.tipo} className="predict-grupo">
+          <h4 className="predict-grupo__titulo">
+            Oferta <strong>{grupo.tipo}</strong>
+          </h4>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Programa</th>
+                  <th>Centro</th>
+                  <th>Probabilidad de éxito</th>
+                </tr>
+              </thead>
+              <tbody>
+                {grupo.rows.map((p) => {
+                  const key = `${tipoSection(p.tipoRespuesta)}-${p.codigoPrograma}`;
+                  const mejor = mejorPorTipoCodigo.get(key) === p.probabilidadExito;
+                  return (
+                    <tr key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}>
+                      <td>{p.codigoPrograma}</td>
+                      <td>{p.prfDenominacion ?? '—'}</td>
+                      <td>
+                        {p.centro ?? '—'}
+                        {mejor && <span className="tag tag--mejor">mejor proyección</span>}
+                      </td>
+                      <td>
+                        <span className={`badge badge--${probColor(p.probabilidadExito)}`}>
+                          {(p.probabilidadExito * 100).toFixed(1)}%
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+      <p className="chart-note">
+        Para cada oferta (abierta y cerrada) se muestran de mayor a menor probabilidad calculada por
+        el modelo. La etiqueta "mejor proyección" marca la sede con mayor probabilidad dentro de cada
+        tipo de oferta.
+      </p>
     </div>
   );
 }
