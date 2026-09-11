@@ -3,20 +3,28 @@ import type { ModelRepository } from '../../domain/ports';
 import type {
   FichaOferta,
   HealthStatus,
+  MapaResponse,
   Metricas,
   PredictionRequest,
   Programa,
+  ProgramaDetalle,
   ProgramasResponse,
   Top30Response,
   UltimaOfertaResponse,
 } from '../../domain/entities';
 import type {
+  ApiDetalleAnio,
+  ApiDetalleJornada,
+  ApiDetalleMunicipio,
   ApiFichaOferta,
   ApiHealth,
+  ApiMapaResponse,
   ApiMetricas,
+  ApiMunicipioMapa,
   ApiPredictRequest,
   ApiPredictResponse,
   ApiPrograma,
+  ApiProgramaDetalle,
   ApiProgramasResponse,
   ApiTop30,
   ApiUltimaOferta,
@@ -31,6 +39,8 @@ function mapPrograma(d: ApiPrograma): Programa {
     apuestasPrioritarias: d['APUESTAS PRIORITARIAS'] ?? null,
     centro: d.CENTRO ?? null,
     tipoRespuesta: d.TIPO_RESPUESTA,
+    municipio: d.MUNICIPIO ?? null,
+    jornada: d.JORNADA ?? null,
     probabilidadExito: Number(d.probabilidad_exito),
     fuente: d.fuente,
   };
@@ -50,6 +60,71 @@ function mapFicha(d: ApiFichaOferta): FichaOferta {
     inscritos: Number(d.inscritos),
     ocupacion: Number(d.ocupacion),
     probabilidadExito: d.probabilidad_exito === null ? null : Number(d.probabilidad_exito),
+  };
+}
+
+function mapMunicipioMapa(d: ApiMunicipioMapa) {
+  return {
+    municipio: d.municipio,
+    lat: Number(d.lat),
+    lon: Number(d.lon),
+    code: Number(d.code),
+    nFichas: Number(d.n_fichas),
+    nProgramas: Number(d.n_programas),
+    probPromedio: Number(d.prob_promedio),
+    tasaExito: Number(d.tasa_exito),
+  };
+}
+
+function mapDetalleMunicipio(d: ApiDetalleMunicipio) {
+  return {
+    municipio: d.municipio,
+    lat: Number(d.lat),
+    lon: Number(d.lon),
+    code: Number(d.code),
+    nFichas: Number(d.n_fichas),
+    tasaExito: Number(d.tasa_exito),
+    probPromedio: d.prob_promedio === null ? null : Number(d.prob_promedio),
+  };
+}
+
+function mapDetalleJornada(d: ApiDetalleJornada) {
+  return {
+    jornada: d.jornada,
+    nFichas: Number(d.n_fichas),
+    tasaExito: Number(d.tasa_exito),
+  };
+}
+
+function mapDetalleAnio(d: ApiDetalleAnio) {
+  return {
+    anio: Number(d.anio),
+    nFichas: Number(d.n_fichas),
+    ejecutadas: Number(d.ejecutadas),
+    canceladas: Number(d.canceladas),
+    tasaExito: Number(d.tasa_exito),
+  };
+}
+
+function mapProgramaDetalle(d: ApiProgramaDetalle): ProgramaDetalle {
+  return {
+    codigo: Number(d.codigo),
+    denominacion: d.denominacion,
+    nivel: d.nivel,
+    redConocimiento: d.red_conocimiento,
+    apuestas: d.apuestas,
+    nFichasTotal: Number(d.n_fichas_total),
+    mejorJornada: d.mejor_jornada === null ? null : mapDetalleJornada(d.mejor_jornada),
+    filas: d.filas.map((f) => ({
+      centro: f.centro,
+      tipoRespuesta: f.tipo_respuesta,
+      probabilidadExito: Number(f.probabilidad_exito),
+      municipio: f.municipio,
+      jornada: f.jornada,
+    })),
+    porMunicipio: d.por_municipio.map(mapDetalleMunicipio),
+    porJornada: d.por_jornada.map(mapDetalleJornada),
+    porAnio: d.por_anio.map(mapDetalleAnio),
   };
 }
 
@@ -111,5 +186,19 @@ export class ModelApiAdapter implements ModelRepository {
     const body: ApiPredictRequest = { codigos: request.codigos };
     const { data } = await httpClient.post<ApiPredictResponse>('/predict', body);
     return data.resultados.map(mapPrograma);
+  }
+
+  async getMapa(): Promise<MapaResponse> {
+    const { data } = await httpClient.get<ApiMapaResponse>('/mapa');
+    return {
+      totalMunicipios: data.total_municipios,
+      municipios: data.municipios.map(mapMunicipioMapa),
+    };
+  }
+
+  async getProgramaDetalle(codigo: number): Promise<ProgramaDetalle> {
+    const { data } = await httpClient.get<ApiProgramaDetalle>(`/programa/${codigo}`);
+    if ('error' in data) throw new Error((data as { error: string }).error);
+    return mapProgramaDetalle(data);
   }
 }

@@ -10,6 +10,7 @@ interface Props {
   totalPages: number;
   total: number;
   goToPage: (page: number) => void;
+  onVerPrograma: (codigo: number) => void;
 }
 
 function pageNumbers(current: number, total: number): (number | '…')[] {
@@ -24,7 +25,7 @@ function pageNumbers(current: number, total: number): (number | '…')[] {
   return pages;
 }
 
-export function ProgramTable({ programas, currentPage, totalPages, total, goToPage }: Props) {
+export function ProgramTable({ programas, currentPage, totalPages, total, goToPage, onVerPrograma }: Props) {
   const from = programas.length === 0 ? 0 : (currentPage - 1) * PROGRAMS_PER_PAGE + 1;
   const to = from + programas.length - 1;
 
@@ -46,7 +47,11 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
           </thead>
           <tbody>
             {programas.map((p, i) => (
-              <tr key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}>
+              <tr
+                key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}
+                className="row-clickable"
+                onClick={() => onVerPrograma(p.codigoPrograma)}
+              >
                 <td>{from + i}</td>
                 <td>{p.codigoPrograma}</td>
                 <td>{p.prfDenominacion ?? '—'}</td>

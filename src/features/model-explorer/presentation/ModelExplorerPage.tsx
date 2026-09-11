@@ -2,22 +2,31 @@ import { useMemo, useState } from 'react';
 import { ErrorBox, Loader } from '@/shared/ui/Card';
 import { usePrograms } from './hooks/use-programs';
 import { useUltimaOferta } from './hooks/use-ultima-oferta';
+import { useProgramaDetalle } from './hooks/use-programa-detalle';
 import { StatCards } from './components/StatCards';
 import { ProbabilityBarChart } from './components/ProbabilityBarChart';
 import { CentroBarChart, RedBarChart } from './components/DistributionCharts';
 import { ProgramTable } from './components/ProgramTable';
 import { PredictPanel } from './components/PredictPanel';
 import { UltimaOfertaPanel } from './components/UltimaOfertaPanel';
+import { CaucaMap } from './components/CaucaMap';
+import { ProgramaModal, MunicipioModal } from './components/ProgramaModal';
 import { CentroFilter, uniqueCentros } from './components/CentroFilter';
 import { TipoFilter, uniqueTipos } from './components/TipoFilter';
 import { ModelInfo } from './components/ModelInfo';
 
+type ModalState =
+  | { tipo: 'programa'; codigo: number }
+  | { tipo: 'municipio'; municipio: string };
+
 export function ModelExplorerPage() {
   const { programas, loading, error, reload } = usePrograms();
   const ultimaOferta = useUltimaOferta();
+  const detalle = useProgramaDetalle();
   const [seleccion, setSeleccion] = useState<string[]>([]);
   const [seleccionTipo, setSeleccionTipo] = useState<string[]>(['ABIERTA']);
   const [currentPage, setCurrentPage] = useState(1);
+  const [modal, setModal] = useState<ModalState | null>(null);
 
   const centros = useMemo(() => uniqueCentros(programas), [programas]);
   const tipos = useMemo(() => uniqueTipos(programas), [programas]);
@@ -53,6 +62,16 @@ export function ModelExplorerPage() {
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
     );
 
+  const verPrograma = (codigo: number) => {
+    setModal({ tipo: 'programa', codigo });
+    detalle.open(codigo);
+  };
+  const verMunicipio = (municipio: string) => setModal({ tipo: 'municipio', municipio });
+  const cerrarModal = () => {
+    setModal(null);
+    detalle.close();
+  };
+
   if (loading) return <Loader label="Cargando datos del modelo..." />;
   if (error) return <ErrorBox message={error} />;
 
@@ -86,11 +105,14 @@ export function ModelExplorerPage() {
 
       <StatCards programas={filtrados} filtrado={filtrado} />
 
+      <CaucaMap onMunicipioClick={verMunicipio} />
+
       <UltimaOfertaPanel
         data={ultimaOferta.data}
         loading={ultimaOferta.loading}
         error={ultimaOferta.error}
         reload={ultimaOferta.reload}
+        onVerPrograma={verPrograma}
       />
 
       <div className="grid grid--2">
@@ -105,11 +127,48 @@ export function ModelExplorerPage() {
         totalPages={totalPages}
         total={filtrados.length}
         goToPage={goToPage}
+        onVerPrograma={verPrograma}
       />
-      <PredictPanel programas={programas} />
+      <PredictPanel programas={programas} onVerPrograma={verPrograma} />
       <footer className="dashboard__footer">
         <ModelInfo />
       </footer>
+
+      {modal?.tipo === 'municipio' && (
+        <MunicipioModal
+          municipio={modal.municipio}
+          programas={programas}
+          onClose={cerrarModal}
+          onVerPrograma={verPrograma}
+        />
+      )}
+
+      {modal?.tipo === 'programa' && (
+        <>
+          {detalle.loading && (
+            <div className="modal-backdrop" onClick={cerrarModal}>
+              <div className="modal modal--programa">
+                <p className="loader-light">Cargando detalle del programa…</p>
+              </div>
+            </div>
+          )}
+          {detalle.error && (
+            <div className="modal-backdrop" onClick={cerrarModal}>
+              <div className="modal modal--programa">
+                <div className="error-box">
+                  Error: {detalle.error}{' '}
+                  <button className="btn" onClick={() => verPrograma(modal.codigo)}>
+                    Reintentar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {detalle.data && (
+            <ProgramaModal detalle={detalle.data} onClose={cerrarModal} />
+          )}
+        </>
+      )}
     </div>
   );
 }

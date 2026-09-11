@@ -8,6 +8,8 @@ export interface Programa {
   apuestasPrioritarias: string | null;
   centro: string | null;
   tipoRespuesta: string;
+  municipio: string | null;
+  jornada: string | null;
   probabilidadExito: number;
   fuente: FuenteProbabilidad;
 }
@@ -63,4 +65,66 @@ export interface HealthStatus {
 
 export interface PredictionRequest {
   codigos: number[];
+}
+
+export interface MunicipioMapa {
+  municipio: string;
+  lat: number;
+  lon: number;
+  code: number;
+  nFichas: number;
+  nProgramas: number;
+  probPromedio: number;
+  tasaExito: number;
+}
+
+export interface MapaResponse {
+  totalMunicipios: number;
+  municipios: MunicipioMapa[];
+}
+
+export interface DetalleMunicipio {
+  municipio: string;
+  lat: number;
+  lon: number;
+  code: number;
+  nFichas: number;
+  tasaExito: number;
+  probPromedio: number | null;
+}
+
+export interface DetalleJornada {
+  jornada: string;
+  nFichas: number;
+  tasaExito: number;
+}
+
+export interface DetalleAnio {
+  anio: number;
+  nFichas: number;
+  ejecutadas: number;
+  canceladas: number;
+  tasaExito: number;
+}
+
+export interface DetalleFilaPrograma {
+  centro: string;
+  tipoRespuesta: string;
+  probabilidadExito: number;
+  municipio: string;
+  jornada: string;
+}
+
+export interface ProgramaDetalle {
+  codigo: number;
+  denominacion: string;
+  nivel: string;
+  redConocimiento: string;
+  apuestas: string;
+  nFichasTotal: number;
+  mejorJornada: DetalleJornada | null;
+  filas: DetalleFilaPrograma[];
+  porMunicipio: DetalleMunicipio[];
+  porJornada: DetalleJornada[];
+  porAnio: DetalleAnio[];
 }

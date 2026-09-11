@@ -12,6 +12,14 @@ export const getMetricas = (repo: ModelRepository): Promise<Metricas> => repo.ge
 export const getUltimaOferta = (repo: ModelRepository): Promise<UltimaOfertaResponse> =>
   repo.getUltimaOferta();
 
+export const getMapa = (repo: ModelRepository): Promise<import('../domain/entities').MapaResponse> =>
+  repo.getMapa();
+
+export const getProgramaDetalle = (
+  repo: ModelRepository,
+  codigo: number,
+): Promise<import('../domain/entities').ProgramaDetalle> => repo.getProgramaDetalle(codigo);
+
 export const predictProgramas = (
   repo: ModelRepository,
   request: PredictionRequest,

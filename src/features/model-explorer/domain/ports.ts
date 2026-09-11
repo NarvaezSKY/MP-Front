@@ -1,8 +1,10 @@
 import type {
   HealthStatus,
+  MapaResponse,
   Metricas,
   PredictionRequest,
   Programa,
+  ProgramaDetalle,
   ProgramasResponse,
   Top30Response,
   UltimaOfertaResponse,
@@ -19,4 +21,6 @@ export interface ModelRepository {
   getMetricas(): Promise<Metricas>;
   predict(request: PredictionRequest): Promise<Programa[]>;
   getUltimaOferta(): Promise<UltimaOfertaResponse>;
+  getMapa(): Promise<MapaResponse>;
+  getProgramaDetalle(codigo: number): Promise<ProgramaDetalle>;
 }

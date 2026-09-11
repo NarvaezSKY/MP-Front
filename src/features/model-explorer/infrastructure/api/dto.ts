@@ -6,6 +6,8 @@ export interface ApiPrograma {
   'APUESTAS PRIORITARIAS': string | null;
   CENTRO: string | null;
   TIPO_RESPUESTA: string;
+  MUNICIPIO: string | null;
+  JORNADA: string | null;
   probabilidad_exito: number;
   fuente: 'prediccion_historica';
 }
@@ -65,4 +67,66 @@ export interface ApiUltimaOferta {
   con_probabilidad: number;
   ocupacion_promedio: number;
   fichas: ApiFichaOferta[];
+}
+
+export interface ApiMunicipioMapa {
+  municipio: string;
+  lat: number;
+  lon: number;
+  code: number;
+  n_fichas: number;
+  n_programas: number;
+  prob_promedio: number;
+  tasa_exito: number;
+}
+
+export interface ApiMapaResponse {
+  total_municipios: number;
+  municipios: ApiMunicipioMapa[];
+}
+
+export interface ApiDetalleMunicipio {
+  municipio: string;
+  lat: number;
+  lon: number;
+  code: number;
+  n_fichas: number;
+  tasa_exito: number;
+  prob_promedio: number | null;
+}
+
+export interface ApiDetalleJornada {
+  jornada: string;
+  n_fichas: number;
+  tasa_exito: number;
+}
+
+export interface ApiDetalleAnio {
+  anio: number;
+  n_fichas: number;
+  ejecutadas: number;
+  canceladas: number;
+  tasa_exito: number;
+}
+
+export interface ApiDetalleFilaPrograma {
+  centro: string;
+  tipo_respuesta: string;
+  probabilidad_exito: number;
+  municipio: string;
+  jornada: string;
+}
+
+export interface ApiProgramaDetalle {
+  codigo: number;
+  denominacion: string;
+  nivel: string;
+  red_conocimiento: string;
+  apuestas: string;
+  n_fichas_total: number;
+  mejor_jornada: ApiDetalleJornada | null;
+  filas: ApiDetalleFilaPrograma[];
+  por_municipio: ApiDetalleMunicipio[];
+  por_jornada: ApiDetalleJornada[];
+  por_anio: ApiDetalleAnio[];
 }

@@ -30,6 +30,7 @@ interface Props {
   loading: boolean;
   error: string | null;
   reload: () => void;
+  onVerPrograma: (codigo: number) => void;
 }
 
 type SortKey = 'ocupacion' | 'probabilidad' | 'nombre';
@@ -45,7 +46,7 @@ function pct(x: number | null): string {
   return x === null ? '—' : `${Math.round(x * 100)}%`;
 }
 
-export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
+export function UltimaOfertaPanel({ data, loading, error, reload, onVerPrograma }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>('ocupacion');
   const [page, setPage] = useState(1);
 
@@ -150,7 +151,11 @@ export function UltimaOfertaPanel({ data, loading, error, reload }: Props) {
           </thead>
           <tbody>
             {pageRows.map((f) => (
-              <tr key={f.codFicha}>
+              <tr
+                key={f.codFicha}
+                className="row-clickable"
+                onClick={() => onVerPrograma(f.codigoPrograma)}
+              >
                 <td>{f.denominacion}</td>
                 <td>{f.centro}</td>
                 <td>{f.municipio}</td>

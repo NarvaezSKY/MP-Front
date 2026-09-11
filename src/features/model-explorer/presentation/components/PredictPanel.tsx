@@ -6,6 +6,7 @@ import type { Programa } from '../../domain/entities';
 
 interface Props {
   programas: Programa[];
+  onVerPrograma: (codigo: number) => void;
 }
 
 function tipoSection(tipo: string): string {
@@ -14,7 +15,7 @@ function tipoSection(tipo: string): string {
   return tipo.toLowerCase();
 }
 
-export function PredictPanel({ programas }: Props) {
+export function PredictPanel({ programas, onVerPrograma }: Props) {
   const opciones = useMemo(() => {
     const seen = new Set<number>();
     return [...programas]
@@ -145,12 +146,20 @@ export function PredictPanel({ programas }: Props) {
       )}
 
       {error && <div className="error-box">Error: {error}</div>}
-      {resultados.length > 0 && <PredictResultTable resultados={resultados} />}
+      {resultados.length > 0 && (
+        <PredictResultTable resultados={resultados} onVerPrograma={onVerPrograma} />
+      )}
     </Card>
   );
 }
 
-function PredictResultTable({ resultados }: { resultados: Programa[] }) {
+function PredictResultTable({
+  resultados,
+  onVerPrograma,
+}: {
+  resultados: Programa[];
+  onVerPrograma: (codigo: number) => void;
+}) {
   const mejorPorTipoCodigo = useMemo(() => {
     const m = new Map<string, number>();
     for (const p of resultados) {
@@ -208,7 +217,11 @@ function PredictResultTable({ resultados }: { resultados: Programa[] }) {
                   const key = `${tipoSection(p.tipoRespuesta)}-${p.codigoPrograma}`;
                   const mejor = mejorPorTipoCodigo.get(key) === p.probabilidadExito;
                   return (
-                    <tr key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}>
+                    <tr
+                      key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}
+                      className="row-clickable"
+                      onClick={() => onVerPrograma(p.codigoPrograma)}
+                    >
                       <td>{p.codigoPrograma}</td>
                       <td>{p.prfDenominacion ?? '—'}</td>
                       <td>

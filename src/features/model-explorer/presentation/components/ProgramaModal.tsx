@@ -1,0 +1,284 @@
+import { useEffect } from 'react';
+import { probColor } from '../lib/probability-color';
+import { CaucaLeafletMap } from './CaucaLeafletMap';
+import type { Programa, ProgramaDetalle } from '../../domain/entities';
+
+interface Props {
+  detalle: ProgramaDetalle;
+  onClose: () => void;
+}
+
+function numPCT(x: number | null): string {
+  return x === null ? '—' : `${Math.round(x * 100)}%`;
+}
+
+export function ProgramaModal({ detalle, onClose }: Props) {
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onEsc);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onEsc);
+      document.body.style.overflow = 'auto';
+    };
+  }, [onClose]);
+
+  const mejor = detalle.mejorJornada;
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal modal--programa" onClick={(e) => e.stopPropagation()}>
+        <div className="modal__head">
+          <div>
+            <p className="modal__kicker">Programa {detalle.codigo}</p>
+            <h3 className="modal__title">{detalle.denominacion}</h3>
+            <p className="modal__meta">
+              {[detalle.nivel, detalle.redConocimiento].filter(Boolean).join(' · ') || '—'}
+            </p>
+          </div>
+          <button className="modal__close" onClick={onClose} aria-label="Cerrar">
+            ×
+          </button>
+        </div>
+
+        <div className="modal__body">
+          <div className="modal__grid modal__grid--stats">
+            <div className="stat-cell">
+              <span className="stat-cell__label">Fichas históricas</span>
+              <span className="stat-cell__value">{detalle.nFichasTotal}</span>
+            </div>
+            <div className="stat-cell">
+              <span className="stat-cell__label">Centros</span>
+              <span className="stat-cell__value">{detalle.filas.length}</span>
+            </div>
+            <div className="stat-cell">
+              <span className="stat-cell__label">Municipios</span>
+              <span className="stat-cell__value">{detalle.porMunicipio.length}</span>
+            </div>
+            <div className="stat-cell">
+              <span className="stat-cell__label">Mejor jornada</span>
+              <span className="stat-cell__value">
+                {mejor ? (
+                  <>
+                    {mejor.jornada}{' '}
+                    <span className={`badge badge--${probColor(mejor.tasaExito)}`}>
+                      {numPCT(mejor.tasaExito)}
+                    </span>
+                  </>
+                ) : (
+                  '—'
+                )}
+              </span>
+            </div>
+          </div>
+
+          {detalle.filas.length > 0 && (
+            <div className="modal__section">
+              <h4>Probabilidad por centro y tipo de oferta</h4>
+              <div className="table-scroll">
+                <table className="data-table data-table--compact">
+                  <thead>
+                    <tr>
+                      <th>Centro</th>
+                      <th>Tipo respuesta</th>
+                      <th>Municipio</th>
+                      <th>Jornada</th>
+                      <th>Probabilidad de éxito</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detalle.filas.map((f, i) => (
+                      <tr key={`${f.centro}-${f.tipoRespuesta}-${i}`}>
+                        <td>{f.centro}</td>
+                        <td>{f.tipoRespuesta}</td>
+                        <td>{f.municipio}</td>
+                        <td>{f.jornada}</td>
+                        <td>
+                          <span className={`badge badge--${probColor(f.probabilidadExito)}`}>
+                            {(f.probabilidadExito * 100).toFixed(1)}%
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {detalle.porMunicipio.length > 0 && (
+            <div className="modal__section">
+              <h4>Dónde se ha ofertado (tasa de éxito por municipio)</h4>
+              <div className="modal__mapa">
+                <CaucaLeafletMap
+                  municipios={detalle.porMunicipio.map((m) => ({
+                    municipio: m.municipio,
+                    lat: m.lat,
+                    lon: m.lon,
+                    code: m.code,
+                    nFichas: m.nFichas,
+                    nProgramas: 1,
+                    probPromedio: m.probPromedio ?? m.tasaExito ?? 0,
+                    tasaExito: m.tasaExito,
+                  }))}
+                  onMunicipioClick={undefined}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="modal__grid modal__grid--2col">
+            {detalle.porJornada.length > 0 && (
+              <div className="modal__section">
+                <h4>Desempeño por jornada</h4>
+                <table className="data-table data-table--compact">
+                  <thead>
+                    <tr>
+                      <th>Jornada</th>
+                      <th>Fichas</th>
+                      <th>Tasa de éxito</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detalle.porJornada.map((j) => (
+                      <tr key={j.jornada}>
+                        <td>{j.jornada}</td>
+                        <td>{j.nFichas}</td>
+                        <td>
+                          <span className={`badge badge--${probColor(j.tasaExito)}`}>
+                            {numPCT(j.tasaExito)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {detalle.porAnio.length > 0 && (
+              <div className="modal__section">
+                <h4>Historial por año</h4>
+                <table className="data-table data-table--compact">
+                  <thead>
+                    <tr>
+                      <th>Año</th>
+                      <th>Fichas</th>
+                      <th>Ejecutadas</th>
+                      <th>Canceladas</th>
+                      <th>Tasa</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detalle.porAnio.map((a) => (
+                      <tr key={a.anio}>
+                        <td>{a.anio}</td>
+                        <td>{a.nFichas}</td>
+                        <td>{a.ejecutadas}</td>
+                        <td>{a.canceladas}</td>
+                        <td>
+                          <span className={`badge badge--${probColor(a.tasaExito)}`}>
+                            {numPCT(a.tasaExito)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface MunicipioModalProps {
+  municipio: string;
+  programas: Programa[];
+  onClose: () => void;
+  onVerPrograma: (codigo: number) => void;
+}
+
+export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }: MunicipioModalProps) {
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onEsc);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onEsc);
+      document.body.style.overflow = 'auto';
+    };
+  }, [onClose]);
+
+  const rows = useProgramasMunicipio(programas, municipio);
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal modal--municipio" onClick={(e) => e.stopPropagation()}>
+        <div className="modal__head">
+          <div>
+            <p className="modal__kicker">Municipio</p>
+            <h3 className="modal__title">{municipio}</h3>
+            <p className="modal__meta">{rows.length} ofertas en el catálogo con probabilidad del modelo</p>
+          </div>
+          <button className="modal__close" onClick={onClose} aria-label="Cerrar">
+            ×
+          </button>
+        </div>
+
+        <div className="modal__body">
+          {rows.length === 0 && <p className="chart-note">Sin ofertas con probabilidad en este municipio.</p>}
+          {rows.length > 0 && (
+            <div className="table-scroll">
+              <table className="data-table data-table--compact">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Programa</th>
+                    <th>Centro</th>
+                    <th>Tipo</th>
+                    <th>Jornada</th>
+                    <th>Probabilidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((p) => (
+                    <tr
+                      key={`${p.codigoPrograma}-${p.centro}-${p.tipoRespuesta}`}
+                      className="row-clickable"
+                      onClick={() => onVerPrograma(p.codigoPrograma)}
+                    >
+                      <td>{p.codigoPrograma}</td>
+                      <td>{p.prfDenominacion ?? '—'}</td>
+                      <td>{p.centro ?? '—'}</td>
+                      <td>{p.tipoRespuesta}</td>
+                      <td>{p.jornada ?? '—'}</td>
+                      <td>
+                        <span className={`badge badge--${probColor(p.probabilidadExito)}`}>
+                          {(p.probabilidadExito * 100).toFixed(1)}%
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function useProgramasMunicipio(programas: Programa[], municipio: string): Programa[] {
+  const key = municipio.trim().toLowerCase();
+  return programas
+    .filter((p) => (p.municipio ?? '').trim().toLowerCase() === key)
+    .sort((a, b) => b.probabilidadExito - a.probabilidadExito);
+}
