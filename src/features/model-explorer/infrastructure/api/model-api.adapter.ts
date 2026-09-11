@@ -85,6 +85,7 @@ function mapDetalleMunicipio(d: ApiDetalleMunicipio) {
     nFichas: Number(d.n_fichas),
     tasaExito: Number(d.tasa_exito),
     probPromedio: d.prob_promedio === null ? null : Number(d.prob_promedio),
+    probModelo: d.prob_modelo === null ? null : Number(d.prob_modelo),
   };
 }
 
@@ -113,6 +114,7 @@ function mapProgramaDetalle(d: ApiProgramaDetalle): ProgramaDetalle {
     nivel: d.nivel,
     redConocimiento: d.red_conocimiento,
     apuestas: d.apuestas,
+    probabilidadGeneral: d.probabilidad_general === null ? null : Number(d.probabilidad_general),
     nFichasTotal: Number(d.n_fichas_total),
     mejorJornada: d.mejor_jornada === null ? null : mapDetalleJornada(d.mejor_jornada),
     filas: d.filas.map((f) => ({

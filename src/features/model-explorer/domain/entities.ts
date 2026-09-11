@@ -91,6 +91,7 @@ export interface DetalleMunicipio {
   nFichas: number;
   tasaExito: number;
   probPromedio: number | null;
+  probModelo: number | null;
 }
 
 export interface DetalleJornada {
@@ -121,6 +122,7 @@ export interface ProgramaDetalle {
   nivel: string;
   redConocimiento: string;
   apuestas: string;
+  probabilidadGeneral: number | null;
   nFichasTotal: number;
   mejorJornada: DetalleJornada | null;
   filas: DetalleFilaPrograma[];

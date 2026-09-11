@@ -93,6 +93,7 @@ export interface ApiDetalleMunicipio {
   n_fichas: number;
   tasa_exito: number;
   prob_promedio: number | null;
+  prob_modelo: number | null;
 }
 
 export interface ApiDetalleJornada {
@@ -123,6 +124,7 @@ export interface ApiProgramaDetalle {
   nivel: string;
   red_conocimiento: string;
   apuestas: string;
+  probabilidad_general: number | null;
   n_fichas_total: number;
   mejor_jornada: ApiDetalleJornada | null;
   filas: ApiDetalleFilaPrograma[];
