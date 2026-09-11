@@ -23,10 +23,7 @@ function FitRegion() {
   return null;
 }
 
-function radiusFor(nFichas: number): number {
-  if (nFichas <= 0) return 7;
-  return 8 + Math.sqrt(nFichas) * 1.3;
-}
+const BUBBLE_RADIUS = 14;
 
 export function CaucaLeafletMap({ municipios, onMunicipioClick }: Props) {
   return (
@@ -56,7 +53,7 @@ export function CaucaLeafletMap({ municipios, onMunicipioClick }: Props) {
             <CircleMarker
               key={m.code}
               center={[m.lat, m.lon]}
-              radius={radiusFor(m.nFichas)}
+              radius={BUBBLE_RADIUS}
               pathOptions={{ color: '#ffffff', weight: 1.5, fillColor: color, fillOpacity: 0.85 }}
               eventHandlers={{
                 click: () => onMunicipioClick?.(m.municipio.trim()),
@@ -80,20 +77,16 @@ export function CaucaLeafletMap({ municipios, onMunicipioClick }: Props) {
       </MapContainer>
       <div className="mapa-leyenda">
         <span className="mapa-leyenda__item">
-          <span className="mapa-leyenda__dot" style={{ background: probColorCss(1) }} />
-          Mayor probabilidad
+          <span className="mapa-leyenda__dot" style={{ background: probColorCss(0) }} />
+          Menor probabilidad
         </span>
         <span className="mapa-leyenda__item">
           <span className="mapa-leyenda__dot" style={{ background: probColorCss(0.5) }} />
           Media
         </span>
         <span className="mapa-leyenda__item">
-          <span className="mapa-leyenda__dot" style={{ background: probColorCss(0) }} />
-          Menor probabilidad
-        </span>
-        <span className="mapa-leyenda__item">
-          <span className="mapa-leyenda__bar" style={{ height: 20, width: 20 }} />
-          Radio = nº de fichas históricas
+          <span className="mapa-leyenda__dot" style={{ background: probColorCss(1) }} />
+          Mayor probabilidad
         </span>
       </div>
     </div>

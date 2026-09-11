@@ -69,15 +69,15 @@ body {
 }
 
 /* Espaciado vertical estandarizado entre bloques/gráficos del dashboard */
-.dashboard > .card,
-.dashboard > .grid,
-.dashboard > .stat-cards {
+.dashboard-layout {
+  margin-top: var(--space-y);
+}
+
+.dashboard-main > .card {
   margin-bottom: var(--space-y);
 }
 
-.dashboard > .card:last-child,
-.dashboard > .grid:last-child,
-.dashboard > .stat-cards:last-child {
+.dashboard-main > .card:last-child {
   margin-bottom: 0;
 }
 
@@ -298,25 +298,81 @@ body {
   box-shadow: 0 2px 10px rgba(57, 169, 0, 0.25);
 }
 
-.filter-bar {
+/* Sidebar de filtros */
+.dashboard-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.filter-sidebar {
   position: sticky;
   top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  width: 250px;
+  max-height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
   background: var(--panel);
   border: 1px solid #d7e4da;
   border-radius: 12px;
-  padding: 12px 16px;
-  margin-bottom: var(--space-y);
+  padding: 14px 16px;
   box-shadow: 0 2px 8px rgba(22, 50, 31, 0.08);
 }
 
-.filter-bar__label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
+.filter-sidebar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.filter-sidebar__title {
+  margin: 0;
+  font-size: 15px;
+}
+
+.filter-sidebar__scroll {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-sidebar__group {
+  padding: 12px 0;
+  border-top: 1px solid #e5eee7;
+}
+
+.filter-sidebar__group:first-child {
+  border-top: none;
+}
+
+.filter-sidebar__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.filter-sidebar__clear {
+  background: var(--panel-2);
+  color: var(--accent-dark);
+  border: 1px solid #d7e4da;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-sidebar__clear:hover {
+  border-color: var(--accent);
+}
+
+.dashboard-main {
+  flex: 1;
+  min-width: 0;
 }
 
 .filter-bar__select {
@@ -330,14 +386,16 @@ body {
   font-size: 14px;
 }
 
-.filter-bar__clear {
-  background: var(--panel-2);
-  color: var(--accent-dark);
-  border: 1px solid #d7e4da;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 13px;
-  cursor: pointer;
+@media (max-width: 900px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  .filter-sidebar {
+    position: static;
+    width: 100%;
+    max-height: none;
+    overflow-y: visible;
+  }
 }
 
 .combobox {
@@ -696,13 +754,6 @@ body {
   height: 14px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-.mapa-leyenda__bar {
-  display: inline-block;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background: rgba(57, 169, 0, 0.7);
 }
 
 /* Filas clickeables de las tablas */

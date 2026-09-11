@@ -11,9 +11,15 @@ import { PredictPanel } from './components/PredictPanel';
 import { UltimaOfertaPanel } from './components/UltimaOfertaPanel';
 import { CaucaMap } from './components/CaucaMap';
 import { ProgramaModal, MunicipioModal } from './components/ProgramaModal';
-import { CentroFilter, uniqueCentros } from './components/CentroFilter';
-import { TipoFilter, uniqueTipos } from './components/TipoFilter';
+import { FilterSidebar } from './components/FilterSidebar';
 import { ModelInfo } from './components/ModelInfo';
+import {
+  uniqueCentros,
+  uniqueTipos,
+  uniqueNiveles,
+  uniqueRedes,
+  uniqueMunicipios,
+} from './lib/filter-options';
 
 type ModalState =
   | { tipo: 'programa'; codigo: number }
@@ -23,24 +29,37 @@ export function ModelExplorerPage() {
   const { programas, loading, error, reload } = usePrograms();
   const ultimaOferta = useUltimaOferta();
   const detalle = useProgramaDetalle();
-  const [seleccion, setSeleccion] = useState<string[]>([]);
-  const [seleccionTipo, setSeleccionTipo] = useState<string[]>(['ABIERTA']);
+  const [seleccionCentros, setSeleccionCentros] = useState<string[]>([]);
+  const [seleccionTipos, setSeleccionTipos] = useState<string[]>(['ABIERTA']);
+  const [seleccionNiveles, setSeleccionNiveles] = useState<string[]>([]);
+  const [seleccionRedes, setSeleccionRedes] = useState<string[]>([]);
+  const [seleccionMunicipios, setSeleccionMunicipios] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [modal, setModal] = useState<ModalState | null>(null);
 
   const centros = useMemo(() => uniqueCentros(programas), [programas]);
   const tipos = useMemo(() => uniqueTipos(programas), [programas]);
-  const filtrado = seleccion.length > 0;
-  const filtradoTipo = seleccionTipo.length > 0;
+  const niveles = useMemo(() => uniqueNiveles(programas), [programas]);
+  const redes = useMemo(() => uniqueRedes(programas), [programas]);
+  const municipios = useMemo(() => uniqueMunicipios(programas), [programas]);
+
   const filtrados = useMemo(
     () =>
       programas.filter(
         (p) =>
-          (!filtrado || seleccion.includes(p.centro ?? 'Sin clasificar')) &&
-          (!filtradoTipo || seleccionTipo.includes(p.tipoRespuesta)),
+          (seleccionCentros.length === 0 ||
+            seleccionCentros.includes(p.centro ?? 'Sin clasificar')) &&
+          (seleccionTipos.length === 0 || seleccionTipos.includes(p.tipoRespuesta)) &&
+          (seleccionNiveles.length === 0 ||
+            (p.nivel !== null && seleccionNiveles.includes(p.nivel))) &&
+          (seleccionRedes.length === 0 ||
+            (p.redConocimiento !== null && seleccionRedes.includes(p.redConocimiento))) &&
+          (seleccionMunicipios.length === 0 ||
+            (p.municipio !== null && seleccionMunicipios.includes(p.municipio))),
       ),
-    [programas, seleccion, seleccionTipo, filtrado, filtradoTipo],
+    [programas, seleccionCentros, seleccionTipos, seleccionNiveles, seleccionRedes, seleccionMunicipios],
   );
+  const filtrado = filtrados.length !== programas.length;
 
   const PER_PAGE = 30;
   const totalPages = Math.max(1, Math.ceil(filtrados.length / PER_PAGE));
@@ -53,14 +72,40 @@ export function ModelExplorerPage() {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
 
   const toggleCentro = (c: string) =>
-    setSeleccion((prev) =>
+    setSeleccionCentros((prev) =>
       prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
     );
-
   const toggleTipo = (t: string) =>
-    setSeleccionTipo((prev) =>
+    setSeleccionTipos((prev) =>
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
     );
+  const toggleNivel = (n: string) =>
+    setSeleccionNiveles((prev) =>
+      prev.includes(n) ? prev.filter((x) => x !== n) : [...prev, n],
+    );
+  const toggleRed = (r: string) =>
+    setSeleccionRedes((prev) =>
+      prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r],
+    );
+  const toggleMunicipio = (m: string) =>
+    setSeleccionMunicipios((prev) =>
+      prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m],
+    );
+
+  const limpiarTodos = () => {
+    setSeleccionCentros([]);
+    setSeleccionTipos([]);
+    setSeleccionNiveles([]);
+    setSeleccionRedes([]);
+    setSeleccionMunicipios([]);
+  };
+
+  const activos =
+    seleccionCentros.length +
+    seleccionTipos.length +
+    seleccionNiveles.length +
+    seleccionRedes.length +
+    seleccionMunicipios.length;
 
   const verPrograma = (codigo: number) => {
     setModal({ tipo: 'programa', codigo });
@@ -89,50 +134,83 @@ export function ModelExplorerPage() {
         </button>
       </div>
 
-      <CentroFilter
-        centros={centros}
-        seleccion={seleccion}
-        onToggle={toggleCentro}
-        onClear={() => setSeleccion([])}
-      />
+      <div className="dashboard-layout">
+        <FilterSidebar
+          grupos={[
+            {
+              label: 'Centro de formación',
+              opciones: centros,
+              seleccion: seleccionCentros,
+              onToggle: toggleCentro,
+              onClear: () => setSeleccionCentros([]),
+            },
+            {
+              label: 'Tipo de respuesta',
+              accent: true,
+              opciones: tipos,
+              seleccion: seleccionTipos,
+              onToggle: toggleTipo,
+              onClear: () => setSeleccionTipos([]),
+            },
+            {
+              label: 'Nivel de formación',
+              opciones: niveles,
+              seleccion: seleccionNiveles,
+              onToggle: toggleNivel,
+              onClear: () => setSeleccionNiveles([]),
+            },
+            {
+              label: 'Red de conocimiento',
+              opciones: redes,
+              seleccion: seleccionRedes,
+              onToggle: toggleRed,
+              onClear: () => setSeleccionRedes([]),
+            },
+            {
+              label: 'Municipio',
+              opciones: municipios,
+              seleccion: seleccionMunicipios,
+              onToggle: toggleMunicipio,
+              onClear: () => setSeleccionMunicipios([]),
+            },
+          ]}
+          activos={activos}
+          onClearAll={limpiarTodos}
+        />
 
-      <TipoFilter
-        tipos={tipos}
-        seleccion={seleccionTipo}
-        onToggle={toggleTipo}
-        onClear={() => setSeleccionTipo([])}
-      />
+        <div className="dashboard-main">
+          <StatCards programas={filtrados} filtrado={filtrado} />
 
-      <StatCards programas={filtrados} filtrado={filtrado} />
+          <CaucaMap onMunicipioClick={verMunicipio} />
 
-      <CaucaMap onMunicipioClick={verMunicipio} />
+          <UltimaOfertaPanel
+            data={ultimaOferta.data}
+            loading={ultimaOferta.loading}
+            error={ultimaOferta.error}
+            reload={ultimaOferta.reload}
+            onVerPrograma={verPrograma}
+          />
 
-      <UltimaOfertaPanel
-        data={ultimaOferta.data}
-        loading={ultimaOferta.loading}
-        error={ultimaOferta.error}
-        reload={ultimaOferta.reload}
-        onVerPrograma={verPrograma}
-      />
+          <div className="grid grid--2">
+            <CentroBarChart programas={programas} />
+            <RedBarChart programas={filtrados} />
+          </div>
 
-      <div className="grid grid--2">
-        <CentroBarChart programas={programas} />
-        <RedBarChart programas={filtrados} />
+          <ProbabilityBarChart programas={filtrados} />
+          <ProgramTable
+            programas={pageProgramas}
+            currentPage={safePage}
+            totalPages={totalPages}
+            total={filtrados.length}
+            goToPage={goToPage}
+            onVerPrograma={verPrograma}
+          />
+          <PredictPanel programas={programas} onVerPrograma={verPrograma} />
+          <footer className="dashboard__footer">
+            <ModelInfo />
+          </footer>
+        </div>
       </div>
-
-      <ProbabilityBarChart programas={filtrados} />
-      <ProgramTable
-        programas={pageProgramas}
-        currentPage={safePage}
-        totalPages={totalPages}
-        total={filtrados.length}
-        goToPage={goToPage}
-        onVerPrograma={verPrograma}
-      />
-      <PredictPanel programas={programas} onVerPrograma={verPrograma} />
-      <footer className="dashboard__footer">
-        <ModelInfo />
-      </footer>
 
       {modal?.tipo === 'municipio' && (
         <MunicipioModal

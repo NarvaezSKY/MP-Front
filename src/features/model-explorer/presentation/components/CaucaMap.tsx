@@ -12,9 +12,10 @@ export function CaucaMap({ onMunicipioClick }: Props) {
   return (
     <Card title="Mapa de probabilidad de éxito por municipio">
       <p className="chart-note">
-        Cada burbuja es un municipio: el tamaño indica el número de fichas históricas y el color, la
-        probabilidad promedio de éxito que predice el modelo (verde = mayor, rojo = menor). Haz clic
-        en un municipio o en una fila de las tablas para ver el detalle del programa.
+        Cada burbuja es un municipio: el color indica la probabilidad promedio de éxito que predice
+        el modelo (rojo = menor, amarillo = media, verde = mayor). El número de fichas y programas
+        se muestra al pasar el cursor. Haz clic en un municipio o en una fila de las tablas para ver
+        el detalle del programa.
       </p>
       {loading && <p className="loader-light">Cargando mapa…</p>}
       {error && (
