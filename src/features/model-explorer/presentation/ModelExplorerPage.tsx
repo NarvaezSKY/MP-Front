@@ -139,6 +139,7 @@ export function ModelExplorerPage() {
           grupos={[
             {
               label: 'Centro de formación',
+              kind: 'dropdown',
               opciones: centros,
               seleccion: seleccionCentros,
               onToggle: toggleCentro,
@@ -146,6 +147,7 @@ export function ModelExplorerPage() {
             },
             {
               label: 'Tipo de respuesta',
+              kind: 'dropdown',
               accent: true,
               opciones: tipos,
               seleccion: seleccionTipos,
@@ -154,6 +156,7 @@ export function ModelExplorerPage() {
             },
             {
               label: 'Nivel de formación',
+              kind: 'dropdown',
               opciones: niveles,
               seleccion: seleccionNiveles,
               onToggle: toggleNivel,
@@ -161,6 +164,7 @@ export function ModelExplorerPage() {
             },
             {
               label: 'Red de conocimiento',
+              kind: 'modal',
               opciones: redes,
               seleccion: seleccionRedes,
               onToggle: toggleRed,
@@ -168,6 +172,7 @@ export function ModelExplorerPage() {
             },
             {
               label: 'Municipio',
+              kind: 'modal',
               opciones: municipios,
               seleccion: seleccionMunicipios,
               onToggle: toggleMunicipio,

@@ -370,6 +370,89 @@ body {
   border-color: var(--accent);
 }
 
+.filter-sidebar__trigger-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.filter-sidebar__trigger {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid #d7e4da;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.filter-sidebar__trigger:hover {
+  border-color: var(--accent);
+}
+
+.filter-sidebar__trigger--open {
+  border-color: var(--accent);
+}
+
+.filter-sidebar__trigger-label {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filter-sidebar__trigger-value {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.filter-sidebar__trigger-clear {
+  flex-shrink: 0;
+  border: 1px solid #d7e4da;
+  border-radius: 8px;
+  background: #fdecec;
+  color: #b44141;
+  width: 32px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.filter-sidebar__trigger-clear:hover {
+  border-color: #e05656;
+}
+
+.filter-sidebar__dropdown {
+  margin-top: 8px;
+  background: var(--panel);
+  border: 1px solid #d7e4da;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.filter-sidebar__editar {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: var(--accent-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.filter-sidebar__editar:hover {
+  text-decoration: underline;
+}
+
 .dashboard-main {
   flex: 1;
   min-width: 0;
@@ -790,6 +873,63 @@ body {
 
 .modal--municipio {
   max-width: 760px;
+}
+
+.modal--filtro {
+  max-width: 480px;
+}
+
+.filtro-modal__search {
+  width: 100%;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid #d7e4da;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.filtro-modal__list {
+  margin-top: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filtro-modal__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.filtro-modal__item:hover {
+  background: var(--panel-2);
+}
+
+.filtro-modal__item--active {
+  background: var(--panel-2);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.filtro-modal__item input {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.filtro-modal__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .modal__head {
