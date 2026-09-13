@@ -35,13 +35,6 @@ interface Props {
 
 type SortKey = 'ocupacion' | 'probabilidad' | 'nombre';
 
-function ocupacionColor(o: number): string {
-  if (o <= 0) return 'critico';
-  if (o < 0.2) return 'bajo';
-  if (o >= 0.8) return 'alto';
-  return 'medio';
-}
-
 function pct(x: number | null): string {
   return x === null ? '—' : `${Math.round(x * 100)}%`;
 }
@@ -162,15 +155,7 @@ export function UltimaOfertaPanel({ data, loading, error, reload, onVerPrograma 
                 <td>{f.cupo}</td>
                 <td>{f.inscritos}</td>
                 <td>
-                  <div className="ocup">
-                    <span className={`ocup__bar`}>
-                      <span
-                        className={`ocup__fill ocup__fill--${ocupacionColor(f.ocupacion)}`}
-                        style={{ width: `${Math.min(100, f.ocupacion * 100)}%` }}
-                      />
-                    </span>
-                    <span className="ocup__val">{Math.round(f.ocupacion * 100)}%</span>
-                  </div>
+                  <span className="ocup__val">{Math.round(f.ocupacion * 100)}%</span>
                 </td>
                 <td>
                   <span className={`badge badge--${probColor(f.probabilidadExito)}`}>
@@ -224,7 +209,7 @@ export function UltimaOfertaPanel({ data, loading, error, reload, onVerPrograma 
 
       <p className="chart-note">
         Verde esquema: el contraste entre <strong>probabilidad del modelo</strong> y{' '}
-        <strong>ocupación actual</strong> anticipa el resultado: prob. baja + ocupación baja ⇒ alta
+        <strong>ocupación actual</strong> anticipa el resultado: probabilidad baja + ocupación baja ⇒ alta
         probabilidad de cancelación.
       </p>
     </Card>

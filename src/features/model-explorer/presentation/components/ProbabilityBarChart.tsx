@@ -50,7 +50,7 @@ export function ProbabilityBarChart({ programas }: Props) {
               interval={0}
             />
             <Tooltip formatter={(v: number) => `${v}%`} />
-            <Bar dataKey="prob" radius={[0, 4, 4, 0]} barSize={18}>
+            <Bar name="Probabilidad" dataKey="prob" radius={[0, 4, 4, 0]} barSize={18}>
               {data.map((_, i) => (
                 <Cell key={i} fill={COLOR} />
               ))}

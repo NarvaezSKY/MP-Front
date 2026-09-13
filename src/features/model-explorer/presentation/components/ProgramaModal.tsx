@@ -143,7 +143,7 @@ export function ProgramaModal({ detalle, onClose }: Props) {
                       <th>Municipio</th>
                       <th>Fichas</th>
                       <th>Tasa de éxito</th>
-                      <th>Prob. modelo</th>
+                      <th>Probabilidad del modelo</th>
                     </tr>
                   </thead>
                   <tbody>

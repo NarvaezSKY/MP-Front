@@ -63,7 +63,7 @@ export function CaucaLeafletMap({ municipios, onMunicipioClick }: Props) {
                 <span>
                   <strong>{m.municipio}</strong>
                   <br />
-                  Prob. éxito: {(m.probPromedio * 100).toFixed(1)}%
+                  Probabilidad de éxito: {(m.probPromedio * 100).toFixed(1)}%
                   <br />
                   Fichas: {m.nFichas} · Programas: {m.nProgramas}
                   <br />

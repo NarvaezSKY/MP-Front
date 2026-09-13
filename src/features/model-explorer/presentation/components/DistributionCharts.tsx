@@ -28,8 +28,8 @@ function aggregate(programas: Programa[], key: 'centro' | 'redConocimiento') {
     map.set(k, cur);
   }
   return Array.from(map.entries())
-    .map(([name, v]) => ({ name, avg: +( (v.sum / v.n) * 100).toFixed(1), n: v.n }))
-    .sort((a, b) => b.avg - a.avg);
+    .map(([name, v]) => ({ name, prob: +((v.sum / v.n) * 100).toFixed(1), n: v.n }))
+    .sort((a, b) => b.prob - a.prob);
 }
 
 export function CentroBarChart({ programas }: Props) {
@@ -49,12 +49,12 @@ export function CentroBarChart({ programas }: Props) {
           />
           <YAxis domain={[0, 100]} unit="%" />
           <Tooltip formatter={(v: number) => `${v}%`} />
-          <Bar dataKey="avg" radius={[4, 4, 0, 0]}>
+          <Bar name="Probabilidad promedio" dataKey="prob" radius={[4, 4, 0, 0]}>
             {data.map((_, i) => (
               <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
             ))}
             <LabelList
-              dataKey="avg"
+              dataKey="prob"
               position="top"
               formatter={(v: number) => `${v}%`}
               fontSize={10}
@@ -92,9 +92,9 @@ export function RedBarChart({ programas }: Props) {
               interval={0}
             />
             <Tooltip formatter={(v: number) => `${v}%`} />
-            <Bar dataKey="avg" radius={[0, 4, 4, 0]} barSize={20} fill="#39a900">
+            <Bar name="Probabilidad promedio" dataKey="prob" radius={[0, 4, 4, 0]} barSize={20} fill="#39a900">
               <LabelList
-                dataKey="avg"
+                dataKey="prob"
                 position="right"
                 formatter={(v: number) => `${v}%`}
                 fontSize={10}
