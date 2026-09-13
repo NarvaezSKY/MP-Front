@@ -20,6 +20,7 @@ import {
   uniqueRedes,
   uniqueMunicipios,
 } from './lib/filter-options';
+import { normalizeText } from './lib/strings';
 
 type ModalState =
   | { tipo: 'programa'; codigo: number }
@@ -43,6 +44,11 @@ export function ModelExplorerPage() {
   const redes = useMemo(() => uniqueRedes(programas), [programas]);
   const municipios = useMemo(() => uniqueMunicipios(programas), [programas]);
 
+  const municipiosNorm = useMemo(
+    () => new Set(seleccionMunicipios.map(normalizeText)),
+    [seleccionMunicipios],
+  );
+
   const filtrados = useMemo(
     () =>
       programas.filter(
@@ -55,9 +61,9 @@ export function ModelExplorerPage() {
           (seleccionRedes.length === 0 ||
             (p.redConocimiento !== null && seleccionRedes.includes(p.redConocimiento))) &&
           (seleccionMunicipios.length === 0 ||
-            (p.municipio !== null && seleccionMunicipios.includes(p.municipio))),
+            (p.municipio !== null && municipiosNorm.has(normalizeText(p.municipio)))),
       ),
-    [programas, seleccionCentros, seleccionTipos, seleccionNiveles, seleccionRedes, seleccionMunicipios],
+    [programas, seleccionCentros, seleccionTipos, seleccionNiveles, seleccionRedes, municipiosNorm],
   );
   const filtrado = filtrados.length !== programas.length;
 

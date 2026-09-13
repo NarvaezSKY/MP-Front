@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '@/shared/ui/Card';
 import { usePredict } from '../hooks/use-predict';
 import { probColor } from '../lib/probability-color';
+import { normalizeText } from '../lib/strings';
 import type { Programa } from '../../domain/entities';
 
 interface Props {
@@ -63,10 +64,10 @@ export function PredictPanel({ programas, onVerPrograma }: Props) {
   }, [abierto]);
 
   const sugerencias = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = normalizeText(query);
     return opciones
       .filter((p) => !seleccionados.includes(p.codigoPrograma))
-      .filter((p) => (q ? (p.prfDenominacion ?? '').toLowerCase().includes(q) : true))
+      .filter((p) => (q ? normalizeText(p.prfDenominacion ?? '').includes(q) : true))
       .slice(0, 12);
   }, [opciones, query, seleccionados]);
 

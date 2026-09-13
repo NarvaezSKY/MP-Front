@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { normalizeText } from '../lib/strings';
 import type { GrupoFiltro } from './FilterSidebar';
 
 interface Props {
@@ -22,9 +23,9 @@ export function FiltroModal({ grupo, onClose }: Props) {
   }, [onClose]);
 
   const filtradas = useMemo(() => {
-    const query = q.trim().toLowerCase();
+    const query = normalizeText(q);
     if (!query) return grupo.opciones;
-    return grupo.opciones.filter((o) => o.toLowerCase().includes(query));
+    return grupo.opciones.filter((o) => normalizeText(o).includes(query));
   }, [grupo.opciones, q]);
 
   return (
