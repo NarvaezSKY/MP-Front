@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { probColor } from '../lib/probability-color';
 import { CaucaLeafletMap } from './CaucaLeafletMap';
-import type { Programa, ProgramaDetalle } from '../../domain/entities';
+import { useMunicipioProgramas } from '../hooks/use-municipio-programas';
+import type { ProgramaDetalle } from '../../domain/entities';
 
 interface Props {
   detalle: ProgramaDetalle;
@@ -313,12 +314,11 @@ export function ProgramaModal({ detalle, onClose }: Props) {
 
 interface MunicipioModalProps {
   municipio: string;
-  programas: Programa[];
   onClose: () => void;
   onVerPrograma: (codigo: number) => void;
 }
 
-export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }: MunicipioModalProps) {
+export function MunicipioModal({ municipio, onClose, onVerPrograma }: MunicipioModalProps) {
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -331,7 +331,7 @@ export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }:
     };
   }, [onClose]);
 
-  const rows = useProgramasMunicipio(programas, municipio);
+  const { data: rows, loading, error } = useMunicipioProgramas(municipio);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -340,7 +340,7 @@ export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }:
           <div>
             <p className="modal__kicker">Municipio</p>
             <h3 className="modal__title">{municipio}</h3>
-            <p className="modal__meta">{rows.length} ofertas en el catálogo con probabilidad del modelo</p>
+            <p className="modal__meta">Programas con fichas y probabilidad del modelo en este municipio</p>
           </div>
           <button className="modal__close" onClick={onClose} aria-label="Cerrar">
             ×
@@ -348,8 +348,21 @@ export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }:
         </div>
 
         <div className="modal__body">
-          {rows.length === 0 && <p className="chart-note">Sin ofertas con probabilidad en este municipio.</p>}
-          {rows.length > 0 && (
+          {loading && <p className="loader-light">Cargando programas del municipio…</p>}
+          {!loading && error && (
+            <div className="error-box">
+              Error: {error}{' '}
+              <button className="btn" onClick={onClose}>
+                Cerrar
+              </button>
+            </div>
+          )}
+          {!loading && !error && rows !== null && rows.length === 0 && (
+            <p className="chart-note">
+              Sin programas con fichas utilizables por el modelo en este municipio.
+            </p>
+          )}
+          {!loading && !error && rows !== null && rows.length > 0 && (
             <div className="table-scroll">
               <table className="data-table data-table--compact">
                 <thead>
@@ -359,6 +372,7 @@ export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }:
                     <th>Centro</th>
                     <th>Tipo</th>
                     <th>Jornada</th>
+                    <th>Fichas</th>
                     <th>Probabilidad</th>
                   </tr>
                 </thead>
@@ -374,9 +388,10 @@ export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }:
                       <td>{p.centro ?? '—'}</td>
                       <td>{p.tipoRespuesta}</td>
                       <td>{p.jornada ?? '—'}</td>
+                      <td>{p.nFichas}</td>
                       <td>
-                        <span className={`badge badge--${probColor(p.probabilidadExito)}`}>
-                          {(p.probabilidadExito * 100).toFixed(1)}%
+                        <span className={`badge badge--${probColor(p.probModelo)}`}>
+                          {(p.probModelo * 100).toFixed(1)}%
                         </span>
                       </td>
                     </tr>
@@ -389,11 +404,4 @@ export function MunicipioModal({ municipio, programas, onClose, onVerPrograma }:
       </div>
     </div>
   );
-}
-
-function useProgramasMunicipio(programas: Programa[], municipio: string): Programa[] {
-  const key = municipio.trim().toLowerCase();
-  return programas
-    .filter((p) => (p.municipio ?? '').trim().toLowerCase() === key)
-    .sort((a, b) => b.probabilidadExito - a.probabilidadExito);
 }

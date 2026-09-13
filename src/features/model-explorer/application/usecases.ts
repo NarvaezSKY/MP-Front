@@ -20,6 +20,12 @@ export const getProgramaDetalle = (
   codigo: number,
 ): Promise<import('../domain/entities').ProgramaDetalle> => repo.getProgramaDetalle(codigo);
 
+export const getMunicipioProgramas = (
+  repo: ModelRepository,
+  municipio: string,
+): Promise<import('../domain/entities').MunicipioProgramasResponse> =>
+  repo.getMunicipioProgramas(municipio);
+
 export const predictProgramas = (
   repo: ModelRepository,
   request: PredictionRequest,

@@ -5,6 +5,7 @@ import type {
   HealthStatus,
   MapaResponse,
   Metricas,
+  MunicipioProgramasResponse,
   PredictionRequest,
   Programa,
   ProgramaDetalle,
@@ -21,6 +22,8 @@ import type {
   ApiMapaResponse,
   ApiMetricas,
   ApiMunicipioMapa,
+  ApiMunicipioProgramasResponse,
+  ApiProgramaMunicipio,
   ApiPredictRequest,
   ApiPredictResponse,
   ApiPrograma,
@@ -73,6 +76,20 @@ function mapMunicipioMapa(d: ApiMunicipioMapa) {
     nProgramas: Number(d.n_programas),
     probPromedio: Number(d.prob_promedio),
     tasaExito: Number(d.tasa_exito),
+  };
+}
+
+function mapProgramaMunicipio(d: ApiProgramaMunicipio) {
+  return {
+    codigoPrograma: Number(d.CODIGO_PROGRAMA),
+    prfDenominacion: d.PRF_DENOMINACION ?? null,
+    centro: d.CENTRO ?? null,
+    tipoRespuesta: d.TIPO_RESPUESTA,
+    jornada: d.JORNADA ?? null,
+    municipio: d.MUNICIPIO,
+    nFichas: Number(d.n_fichas),
+    tasaExito: Number(d.tasa_exito),
+    probModelo: Number(d.prob_modelo),
   };
 }
 
@@ -202,5 +219,16 @@ export class ModelApiAdapter implements ModelRepository {
     const { data } = await httpClient.get<ApiProgramaDetalle>(`/programa/${codigo}`);
     if ('error' in data) throw new Error((data as { error: string }).error);
     return mapProgramaDetalle(data);
+  }
+
+  async getMunicipioProgramas(municipio: string): Promise<MunicipioProgramasResponse> {
+    const { data } = await httpClient.get<ApiMunicipioProgramasResponse>(
+      `/municipio/${encodeURIComponent(municipio)}`,
+    );
+    return {
+      total: Number(data.total),
+      municipio: data.municipio,
+      programas: data.programas.map(mapProgramaMunicipio),
+    };
   }
 }

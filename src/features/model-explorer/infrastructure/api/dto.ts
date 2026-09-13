@@ -85,6 +85,24 @@ export interface ApiMapaResponse {
   municipios: ApiMunicipioMapa[];
 }
 
+export interface ApiProgramaMunicipio {
+  CODIGO_PROGRAMA: number;
+  PRF_DENOMINACION: string | null;
+  CENTRO: string | null;
+  TIPO_RESPUESTA: string;
+  JORNADA: string | null;
+  MUNICIPIO: string;
+  n_fichas: number;
+  tasa_exito: number;
+  prob_modelo: number;
+}
+
+export interface ApiMunicipioProgramasResponse {
+  total: number;
+  municipio: string;
+  programas: ApiProgramaMunicipio[];
+}
+
 export interface ApiDetalleMunicipio {
   municipio: string;
   lat: number;

@@ -220,7 +220,6 @@ export function ModelExplorerPage() {
       {modal?.tipo === 'municipio' && (
         <MunicipioModal
           municipio={modal.municipio}
-          programas={programas}
           onClose={cerrarModal}
           onVerPrograma={verPrograma}
         />

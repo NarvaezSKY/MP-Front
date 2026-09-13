@@ -83,6 +83,24 @@ export interface MapaResponse {
   municipios: MunicipioMapa[];
 }
 
+export interface ProgramaMunicipio {
+  codigoPrograma: number;
+  prfDenominacion: string | null;
+  centro: string | null;
+  tipoRespuesta: string;
+  jornada: string | null;
+  municipio: string;
+  nFichas: number;
+  tasaExito: number;
+  probModelo: number;
+}
+
+export interface MunicipioProgramasResponse {
+  total: number;
+  municipio: string;
+  programas: ProgramaMunicipio[];
+}
+
 export interface DetalleMunicipio {
   municipio: string;
   lat: number;
