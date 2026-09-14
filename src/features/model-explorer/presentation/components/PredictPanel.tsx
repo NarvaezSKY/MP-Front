@@ -91,7 +91,7 @@ export function PredictPanel({ programas, onVerPrograma }: Props) {
     opciones.find((p) => p.codigoPrograma === codigo)?.prfDenominacion ?? `Código ${codigo}`;
 
   return (
-    <Card title="Predecir probabilidad de éxito por programa">
+    <Card title="Predecir probabilidad de demanda por programa">
       <form className="predict-form" onSubmit={onSubmit}>
         <div className="combobox" ref={comboboxRef}>
           <input
@@ -210,7 +210,7 @@ function PredictResultTable({
                   <th>Código</th>
                   <th>Programa</th>
                   <th>Centro</th>
-                  <th>Probabilidad de éxito</th>
+                  <th>Probabilidad de demanda</th>
                 </tr>
               </thead>
               <tbody>

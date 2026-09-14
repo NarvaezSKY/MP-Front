@@ -42,7 +42,7 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
               <th>Tipo respuesta</th>
               <th>Nivel</th>
               <th>Red</th>
-              <th>Probabilidad de éxito</th>
+              <th>Probabilidad de demanda</th>
             </tr>
           </thead>
           <tbody>

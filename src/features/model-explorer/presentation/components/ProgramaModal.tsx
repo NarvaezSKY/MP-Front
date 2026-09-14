@@ -132,7 +132,7 @@ export function ProgramaModal({ detalle, onClose }: Props) {
                     {numPCT(probMunicipioSel)}
                   </span>
                   <span className="modal__sel-info-detail">
-                    {sel.nFichas} fichas · tasa de éxito {numPCT(sel.tasaExito)}
+                    {sel.nFichas} fichas · tasa de demanda {numPCT(sel.tasaExito)}
                   </span>
                 </div>
               )}
@@ -143,7 +143,7 @@ export function ProgramaModal({ detalle, onClose }: Props) {
                     <tr>
                       <th>Municipio</th>
                       <th>Fichas</th>
-                      <th>Tasa de éxito</th>
+                      <th>Tasa de demanda</th>
                       <th>Probabilidad del modelo</th>
                     </tr>
                   </thead>
@@ -223,7 +223,7 @@ export function ProgramaModal({ detalle, onClose }: Props) {
                       <th>Centro</th>
                       <th>Tipo respuesta</th>
                       <th>Jornada</th>
-                      <th>Probabilidad de éxito</th>
+                      <th>Probabilidad de demanda</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -254,7 +254,7 @@ export function ProgramaModal({ detalle, onClose }: Props) {
                     <tr>
                       <th>Jornada</th>
                       <th>Fichas</th>
-                      <th>Tasa de éxito</th>
+                      <th>Tasa de demanda</th>
                     </tr>
                   </thead>
                   <tbody>

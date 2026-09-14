@@ -132,7 +132,7 @@ export function ModelExplorerPage() {
         <img className="topbar__logo" src="/sena-logo-white.png" alt="SENA" />
         <div className="topbar__titles">
           <h1>Modelo Predictivo SENA</h1>
-          <p>Regional Cauca — exploración de la probabilidad de éxito (ejecución vs cancelación) de la oferta formativa</p>
+          <p>Regional Cauca — exploración de la probabilidad de demanda (ejecución vs cancelación) de la oferta formativa</p>
         </div>
         <img className="topbar__logo topbar__logo--cmr" src="/logo-cmr.png" alt="CMR" />
         <button className="btn btn--ghost" onClick={reload}>
