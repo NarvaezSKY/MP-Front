@@ -23,7 +23,7 @@ body {
 }
 
 .dashboard {
-  max-width: 1180px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 24px 20px 48px;
 }
@@ -62,10 +62,6 @@ body {
   display: grid;
   gap: 14px;
   margin-bottom: var(--space-y);
-}
-
-.grid--2 {
-  grid-template-columns: 1fr 1fr;
 }
 
 /* Espaciado vertical estandarizado entre bloques/gráficos del dashboard */
@@ -458,6 +454,23 @@ body {
   min-width: 0;
 }
 
+.dashboard-section {
+  margin-bottom: var(--space-y);
+}
+
+.dashboard-section:last-child {
+  margin-bottom: 0;
+}
+
+.dashboard-section__title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
 .filter-bar__select {
   flex: 1;
   max-width: 360px;
@@ -624,9 +637,6 @@ body {
 @media (max-width: 880px) {
   .stat-cards {
     grid-template-columns: repeat(2, 1fr);
-  }
-  .grid--2 {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -824,7 +834,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 12px;
   z-index: 1000;
 }
 
@@ -832,14 +842,14 @@ body {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-  max-width: 900px;
+  max-width: min(1200px, 96vw);
   width: 100%;
-  max-height: 90vh;
+  max-height: 94vh;
   overflow-y: auto;
 }
 
 .modal--municipio {
-  max-width: 760px;
+  max-width: min(1400px, 96vw);
 }
 
 .modal--filtro {
@@ -958,6 +968,15 @@ body {
   margin: 0 0 10px;
   font-size: 14px;
   color: var(--accent-2);
+}
+
+.modal__refreshing {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, #8a94a6);
 }
 
 .modal__grid {

@@ -135,11 +135,12 @@ export function UltimaOfertaPanel({ data, loading, error, reload, onVerPrograma 
             <tr>
               <th>Programa</th>
               <th>Centro</th>
+              <th>Nivel</th>
+              <th>Probabilidad del modelo</th>
               <th>Municipio</th>
               <th>Cupo</th>
               <th>Inscritos</th>
               <th>Ocupación</th>
-              <th>Probabilidad del modelo</th>
             </tr>
           </thead>
           <tbody>
@@ -151,16 +152,17 @@ export function UltimaOfertaPanel({ data, loading, error, reload, onVerPrograma 
               >
                 <td>{f.denominacion}</td>
                 <td>{f.centro}</td>
+                <td>{f.nivel}</td>
+                <td>
+                  <span className={`badge badge--${probColor(f.probabilidadExito)}`}>
+                    {pct(f.probabilidadExito)}
+                  </span>
+                </td>
                 <td>{f.municipio}</td>
                 <td>{f.cupo}</td>
                 <td>{f.inscritos}</td>
                 <td>
                   <span className="ocup__val">{Math.round(f.ocupacion * 100)}%</span>
-                </td>
-                <td>
-                  <span className={`badge badge--${probColor(f.probabilidadExito)}`}>
-                    {pct(f.probabilidadExito)}
-                  </span>
                 </td>
               </tr>
             ))}

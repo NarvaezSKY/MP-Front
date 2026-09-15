@@ -1,5 +1,6 @@
 import { httpClient } from '@/shared/http/axios-client';
 import type { ModelRepository } from '../../domain/ports';
+import { normalizarRed } from './red-normalization';
 import type {
   FichaOferta,
   HealthStatus,
@@ -38,7 +39,7 @@ function mapPrograma(d: ApiPrograma): Programa {
     codigoPrograma: Number(d.CODIGO_PROGRAMA),
     prfDenominacion: d.PRF_DENOMINACION ?? null,
     nivel: d.NIVEL ?? null,
-    redConocimiento: d['Red de Conocimiento'] ?? null,
+    redConocimiento: normalizarRed(d['Red de Conocimiento']),
     apuestasPrioritarias: d['APUESTAS PRIORITARIAS'] ?? null,
     centro: d.CENTRO ?? null,
     tipoRespuesta: d.TIPO_RESPUESTA,
@@ -129,7 +130,7 @@ function mapProgramaDetalle(d: ApiProgramaDetalle): ProgramaDetalle {
     codigo: Number(d.codigo),
     denominacion: d.denominacion,
     nivel: d.nivel,
-    redConocimiento: d.red_conocimiento,
+    redConocimiento: normalizarRed(d.red_conocimiento),
     apuestas: d.apuestas,
     probabilidadGeneral: d.probabilidad_general === null ? null : Number(d.probabilidad_general),
     nFichasTotal: Number(d.n_fichas_total),
@@ -137,13 +138,16 @@ function mapProgramaDetalle(d: ApiProgramaDetalle): ProgramaDetalle {
     filas: d.filas.map((f) => ({
       centro: f.centro,
       tipoRespuesta: f.tipo_respuesta,
-      probabilidadExito: Number(f.probabilidad_exito),
+      probabilidadExito: f.probabilidad_exito === null ? null : Number(f.probabilidad_exito),
       municipio: f.municipio,
       jornada: f.jornada,
+      nFichas: f.n_fichas === null || f.n_fichas === undefined ? null : Number(f.n_fichas),
+      tasaExito: f.tasa_exito === null || f.tasa_exito === undefined ? null : Number(f.tasa_exito),
     })),
     porMunicipio: d.por_municipio.map(mapDetalleMunicipio),
     porJornada: d.por_jornada.map(mapDetalleJornada),
     porAnio: d.por_anio.map(mapDetalleAnio),
+    municipio: d.municipio ?? null,
   };
 }
 
@@ -215,8 +219,9 @@ export class ModelApiAdapter implements ModelRepository {
     };
   }
 
-  async getProgramaDetalle(codigo: number): Promise<ProgramaDetalle> {
-    const { data } = await httpClient.get<ApiProgramaDetalle>(`/programa/${codigo}`);
+  async getProgramaDetalle(codigo: number, municipio?: string): Promise<ProgramaDetalle> {
+    const params = municipio ? `?municipio=${encodeURIComponent(municipio)}` : '';
+    const { data } = await httpClient.get<ApiProgramaDetalle>(`/programa/${codigo}${params}`);
     if ('error' in data) throw new Error((data as { error: string }).error);
     return mapProgramaDetalle(data);
   }

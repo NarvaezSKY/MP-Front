@@ -129,9 +129,11 @@ export interface DetalleAnio {
 export interface DetalleFilaPrograma {
   centro: string;
   tipoRespuesta: string;
-  probabilidadExito: number;
+  probabilidadExito: number | null;
   municipio: string;
   jornada: string;
+  nFichas: number | null;
+  tasaExito: number | null;
 }
 
 export interface ProgramaDetalle {
@@ -147,4 +149,5 @@ export interface ProgramaDetalle {
   porMunicipio: DetalleMunicipio[];
   porJornada: DetalleJornada[];
   porAnio: DetalleAnio[];
+  municipio: string | null;
 }

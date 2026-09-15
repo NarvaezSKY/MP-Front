@@ -39,10 +39,10 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
               <th>Código</th>
               <th>Programa</th>
               <th>Centro</th>
-              <th>Tipo respuesta</th>
               <th>Nivel</th>
-              <th>Red</th>
               <th>Probabilidad de demanda</th>
+              <th>Tipo respuesta</th>
+              <th>Red</th>
             </tr>
           </thead>
           <tbody>
@@ -56,14 +56,14 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
                 <td>{p.codigoPrograma}</td>
                 <td>{p.prfDenominacion ?? '—'}</td>
                 <td>{p.centro ?? '—'}</td>
-                <td>{p.tipoRespuesta}</td>
                 <td>{p.nivel ?? '—'}</td>
-                <td>{p.redConocimiento ?? '—'}</td>
                 <td>
                   <span className={`badge badge--${probColor(p.probabilidadExito)}`}>
                     {(p.probabilidadExito * 100).toFixed(1)}%
                   </span>
                 </td>
+                <td>{p.tipoRespuesta}</td>
+                <td>{p.redConocimiento ?? '—'}</td>
               </tr>
             ))}
           </tbody>

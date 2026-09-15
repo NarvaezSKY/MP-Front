@@ -18,7 +18,8 @@ export const getMapa = (repo: ModelRepository): Promise<import('../domain/entiti
 export const getProgramaDetalle = (
   repo: ModelRepository,
   codigo: number,
-): Promise<import('../domain/entities').ProgramaDetalle> => repo.getProgramaDetalle(codigo);
+  municipio?: string,
+): Promise<import('../domain/entities').ProgramaDetalle> => repo.getProgramaDetalle(codigo, municipio);
 
 export const getMunicipioProgramas = (
   repo: ModelRepository,

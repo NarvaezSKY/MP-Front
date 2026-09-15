@@ -131,9 +131,11 @@ export interface ApiDetalleAnio {
 export interface ApiDetalleFilaPrograma {
   centro: string;
   tipo_respuesta: string;
-  probabilidad_exito: number;
+  probabilidad_exito: number | null;
   municipio: string;
   jornada: string;
+  n_fichas?: number | null;
+  tasa_exito?: number | null;
 }
 
 export interface ApiProgramaDetalle {
@@ -149,4 +151,5 @@ export interface ApiProgramaDetalle {
   por_municipio: ApiDetalleMunicipio[];
   por_jornada: ApiDetalleJornada[];
   por_anio: ApiDetalleAnio[];
+  municipio: string | null;
 }

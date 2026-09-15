@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
-import { ErrorBox, Loader } from '@/shared/ui/Card';
+import { ErrorBox, Loader, Section } from '@/shared/ui/Card';
 import { usePrograms } from './hooks/use-programs';
 import { useUltimaOferta } from './hooks/use-ultima-oferta';
 import { useProgramaDetalle } from './hooks/use-programa-detalle';
 import { StatCards } from './components/StatCards';
 import { ProbabilityBarChart } from './components/ProbabilityBarChart';
-import { CentroBarChart, RedBarChart } from './components/DistributionCharts';
+import { RedBarChart } from './components/DistributionCharts';
 import { ProgramTable } from './components/ProgramTable';
 import { PredictPanel } from './components/PredictPanel';
 import { UltimaOfertaPanel } from './components/UltimaOfertaPanel';
@@ -192,31 +192,43 @@ export function ModelExplorerPage() {
         <div className="dashboard-main">
           <StatCards programas={filtrados} filtrado={filtrado} />
 
-          <CaucaMap onMunicipioClick={verMunicipio} />
+          <Section title="Probabilidad de demanda — Top 30">
+            <ProbabilityBarChart programas={filtrados} />
+          </Section>
 
-          <UltimaOfertaPanel
-            data={ultimaOferta.data}
-            loading={ultimaOferta.loading}
-            error={ultimaOferta.error}
-            reload={ultimaOferta.reload}
-            onVerPrograma={verPrograma}
-          />
-
-          <div className="grid grid--2">
-            <CentroBarChart programas={programas} />
+          <Section title="Probabilidad promedio por Red de Conocimiento">
             <RedBarChart programas={filtrados} />
-          </div>
+          </Section>
 
-          <ProbabilityBarChart programas={filtrados} />
-          <ProgramTable
-            programas={pageProgramas}
-            currentPage={safePage}
-            totalPages={totalPages}
-            total={filtrados.length}
-            goToPage={goToPage}
-            onVerPrograma={verPrograma}
-          />
-          <PredictPanel programas={programas} onVerPrograma={verPrograma} />
+          <Section title="Catálogo detallado de programas">
+            <ProgramTable
+              programas={pageProgramas}
+              currentPage={safePage}
+              totalPages={totalPages}
+              total={filtrados.length}
+              goToPage={goToPage}
+              onVerPrograma={verPrograma}
+            />
+          </Section>
+
+          <Section title="Buscador de probabilidad de demanda">
+            <PredictPanel programas={programas} onVerPrograma={verPrograma} />
+          </Section>
+
+          <Section title="Mapa de probabilidad de demanda">
+            <CaucaMap onMunicipioClick={verMunicipio} />
+          </Section>
+
+          <Section title="Última oferta publicada">
+            <UltimaOfertaPanel
+              data={ultimaOferta.data}
+              loading={ultimaOferta.loading}
+              error={ultimaOferta.error}
+              reload={ultimaOferta.reload}
+              onVerPrograma={verPrograma}
+            />
+          </Section>
+
           <footer className="dashboard__footer">
             <ModelInfo />
           </footer>
@@ -253,7 +265,12 @@ export function ModelExplorerPage() {
             </div>
           )}
           {detalle.data && (
-            <ProgramaModal detalle={detalle.data} onClose={cerrarModal} />
+            <ProgramaModal
+              detalle={detalle.data}
+              refreshing={detalle.refreshing}
+              onFiltrarMunicipio={detalle.filtrarMunicipio}
+              onClose={cerrarModal}
+            />
           )}
         </>
       )}
