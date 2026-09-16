@@ -16,6 +16,7 @@ import type {
 } from '../../domain/entities';
 import type {
   ApiDetalleAnio,
+  ApiDetalleCentro,
   ApiDetalleJornada,
   ApiDetalleModalidad,
   ApiDetalleMunicipio,
@@ -136,6 +137,16 @@ function mapDetalleAnio(d: ApiDetalleAnio) {
   };
 }
 
+function mapDetalleCentro(d: ApiDetalleCentro) {
+  return {
+    centro: d.centro,
+    nFichas: Number(d.n_fichas),
+    tasaExito: Number(d.tasa_exito),
+    probabilidadExito: d.probabilidad_exito === null ? null : Number(d.probabilidad_exito),
+    nTipos: Number(d.n_tipos),
+  };
+}
+
 function mapProgramaDetalle(d: ApiProgramaDetalle): ProgramaDetalle {
   return {
     codigo: Number(d.codigo),
@@ -162,7 +173,9 @@ function mapProgramaDetalle(d: ApiProgramaDetalle): ProgramaDetalle {
       ? null
       : mapDetalleModalidad(d.mejor_modalidad),
     porAnio: d.por_anio.map(mapDetalleAnio),
+    porCentro: (d.por_centro ?? []).map(mapDetalleCentro),
     municipio: d.municipio ?? null,
+    centro: d.centro ?? null,
   };
 }
 
@@ -237,9 +250,18 @@ export class ModelApiAdapter implements ModelRepository {
     };
   }
 
-  async getProgramaDetalle(codigo: number, municipio?: string): Promise<ProgramaDetalle> {
-    const params = municipio ? `?municipio=${encodeURIComponent(municipio)}` : '';
-    const { data } = await httpClient.get<ApiProgramaDetalle>(`/programa/${codigo}${params}`);
+  async getProgramaDetalle(
+    codigo: number,
+    municipio?: string,
+    centro?: string,
+  ): Promise<ProgramaDetalle> {
+    const params = new URLSearchParams();
+    if (municipio) params.set('municipio', municipio);
+    if (centro) params.set('centro', centro);
+    const qs = params.toString();
+    const { data } = await httpClient.get<ApiProgramaDetalle>(
+      `/programa/${codigo}${qs ? `?${qs}` : ''}`,
+    );
     if ('error' in data) throw new Error((data as { error: string }).error);
     return mapProgramaDetalle(data);
   }

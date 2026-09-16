@@ -144,6 +144,14 @@ export interface DetalleFilaPrograma {
   tasaExito: number | null;
 }
 
+export interface DetalleCentro {
+  centro: string;
+  nFichas: number;
+  tasaExito: number;
+  probabilidadExito: number | null;
+  nTipos: number;
+}
+
 export interface ProgramaDetalle {
   codigo: number;
   denominacion: string;
@@ -159,5 +167,7 @@ export interface ProgramaDetalle {
   porModalidad: DetalleModalidad[];
   mejorModalidad: DetalleModalidad | null;
   porAnio: DetalleAnio[];
+  porCentro: DetalleCentro[];
   municipio: string | null;
+  centro: string | null;
 }

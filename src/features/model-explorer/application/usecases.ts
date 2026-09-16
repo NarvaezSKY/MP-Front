@@ -22,7 +22,9 @@ export const getProgramaDetalle = (
   repo: ModelRepository,
   codigo: number,
   municipio?: string,
-): Promise<import('../domain/entities').ProgramaDetalle> => repo.getProgramaDetalle(codigo, municipio);
+  centro?: string,
+): Promise<import('../domain/entities').ProgramaDetalle> =>
+  repo.getProgramaDetalle(codigo, municipio, centro);
 
 export const getMunicipioProgramas = (
   repo: ModelRepository,

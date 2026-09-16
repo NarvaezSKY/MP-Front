@@ -146,6 +146,14 @@ export interface ApiDetalleFilaPrograma {
   tasa_exito?: number | null;
 }
 
+export interface ApiDetalleCentro {
+  centro: string;
+  n_fichas: number;
+  tasa_exito: number;
+  probabilidad_exito: number | null;
+  n_tipos: number;
+}
+
 export interface ApiProgramaDetalle {
   codigo: number;
   denominacion: string;
@@ -161,5 +169,7 @@ export interface ApiProgramaDetalle {
   por_modalidad: ApiDetalleModalidad[];
   mejor_modalidad: ApiDetalleModalidad | null;
   por_anio: ApiDetalleAnio[];
+  por_centro?: ApiDetalleCentro[];
   municipio: string | null;
+  centro?: string | null;
 }

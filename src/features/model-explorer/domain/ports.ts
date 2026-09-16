@@ -23,6 +23,10 @@ export interface ModelRepository {
   predict(request: PredictionRequest): Promise<Programa[]>;
   getUltimaOferta(): Promise<UltimaOfertaResponse>;
   getMapa(): Promise<MapaResponse>;
-  getProgramaDetalle(codigo: number, municipio?: string): Promise<ProgramaDetalle>;
+  getProgramaDetalle(
+    codigo: number,
+    municipio?: string,
+    centro?: string,
+  ): Promise<ProgramaDetalle>;
   getMunicipioProgramas(municipio: string): Promise<MunicipioProgramasResponse>;
 }

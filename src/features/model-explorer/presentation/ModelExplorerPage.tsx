@@ -293,7 +293,7 @@ export function ModelExplorerPage() {
             <ProgramaModal
               detalle={detalle.data}
               refreshing={detalle.refreshing}
-              onFiltrarMunicipio={detalle.filtrarMunicipio}
+              onFiltrar={detalle.filtrar}
               onClose={cerrarModal}
             />
           )}

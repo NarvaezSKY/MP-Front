@@ -7,7 +7,7 @@ import type { ProgramaDetalle } from '../../domain/entities';
 interface Props {
   detalle: ProgramaDetalle;
   refreshing: boolean;
-  onFiltrarMunicipio: (municipio: string | null) => void;
+  onFiltrar: (municipio: string | null, centro: string | null) => void;
   onClose: () => void;
 }
 
@@ -15,12 +15,20 @@ function numPCT(x: number | null): string {
   return x === null ? '—' : `${Math.round(x * 100)}%`;
 }
 
-export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose }: Props) {
+export function ProgramaModal({ detalle, refreshing, onFiltrar, onClose }: Props) {
   const [municipioSel, setMunicipioSel] = useState<string>('');
-  useEffect(() => setMunicipioSel(''), [detalle.codigo]);
-  const aplicarFiltro = (valor: string) => {
+  const [centroSel, setCentroSel] = useState<string>('');
+  useEffect(() => {
+    setMunicipioSel('');
+    setCentroSel('');
+  }, [detalle.codigo]);
+  const aplicarFiltroMunicipio = (valor: string) => {
     setMunicipioSel(valor);
-    onFiltrarMunicipio(valor === '' ? null : valor);
+    onFiltrar(valor === '' ? null : valor, centroSel === '' ? null : centroSel);
+  };
+  const aplicarFiltroCentro = (valor: string) => {
+    setCentroSel(valor);
+    onFiltrar(municipioSel === '' ? null : municipioSel, valor === '' ? null : valor);
   };
 
   useEffect(() => {
@@ -38,7 +46,12 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
   const mejor = detalle.mejorJornada;
   const mejorModalidad = detalle.mejorModalidad;
   const municipiosOfertados = detalle.porMunicipio;
+  const centrosPrograma = detalle.porCentro;
   const filtradoPor = detalle.municipio;
+  const filtroCentro = detalle.centro;
+  const infoCtx = [filtroCentro, filtradoPor].filter(Boolean) as string[];
+  const hayFiltro = infoCtx.length > 0;
+  const sufijoSeccion = hayFiltro ? ` en ${infoCtx.join(' · ')}` : '';
   const sel = municipiosOfertados.find((m) => m.municipio === municipioSel) ?? null;
   const probMunicipioSel =
     sel && sel.probModelo !== null
@@ -77,8 +90,8 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
                 )}
               </span>
               <span className="stat-cell__hint">
-                {filtradoPor
-                  ? `Modelo (oferta ABIERTA en ${filtradoPor})`
+                {hayFiltro
+                  ? `Modelo (oferta ABIERTA ${infoCtx.map((ctx) => `en ${ctx}`).join(' · ')})`
                   : 'Modelo (todas las ofertas ABIERTA)'}
               </span>
             </div>
@@ -140,7 +153,7 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
                 <select
                   className="filter-bar__select"
                   value={municipioSel}
-                  onChange={(e) => aplicarFiltro(e.target.value)}
+                  onChange={(e) => aplicarFiltroMunicipio(e.target.value)}
                 >
                   <option value="">Todos los municipios (general)</option>
                   {municipiosOfertados.map((m) => (
@@ -184,7 +197,7 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
                         className={
                           m.municipio === municipioSel ? 'row-selected row-clickable' : 'row-clickable'
                         }
-                        onClick={() => aplicarFiltro(m.municipio)}
+                        onClick={() => aplicarFiltroMunicipio(m.municipio)}
                       >
                         <td>{m.municipio}</td>
                         <td>{m.nFichas}</td>
@@ -245,7 +258,46 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
 
           {detalle.filas.length > 0 && (
             <div className="modal__section">
-              <h4>Probabilidad por centro{filtradoPor ? ` en ${filtradoPor}` : ''}</h4>
+              <h4>
+                Probabilidad por centro{sufijoSeccion}
+                {refreshing && <span className="modal__refreshing">actualizando…</span>}
+              </h4>
+
+              {centrosPrograma.length > 0 && (
+                <label className="modal__filtro">
+                  <span className="modal__filtro-label">Filtrar por centro</span>
+                  <select
+                    className="filter-bar__select"
+                    value={centroSel}
+                    onChange={(e) => aplicarFiltroCentro(e.target.value)}
+                  >
+                    <option value="">Todos los centros (general)</option>
+                    {centrosPrograma.map((c) => (
+                      <option key={c.centro} value={c.centro}>
+                        {c.centro}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+
+              {filtroCentro && (
+                <div className="modal__sel-info">
+                  <span className="modal__sel-info-label">
+                    Probabilidad del programa en {filtroCentro}
+                    {filtradoPor ? ` · ${filtradoPor}` : ''}:
+                  </span>
+                  <span
+                    className={`badge badge--${probColor(detalle.probabilidadGeneral ?? 0)}`}
+                  >
+                    {numPCT(detalle.probabilidadGeneral)}
+                  </span>
+                  <span className="modal__sel-info-detail">
+                    {detalle.nFichasTotal} fichas en este centro
+                  </span>
+                </div>
+              )}
+
               <div className="table-scroll">
                 <table className="data-table data-table--compact">
                   <thead>
@@ -253,8 +305,8 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
                       <th>Centro</th>
                       <th>Tipo respuesta</th>
                       <th>Jornada</th>
-                      {filtradoPor && <th>Fichas</th>}
-                      {filtradoPor && <th>Tasa de demanda</th>}
+                      {hayFiltro && <th>Fichas</th>}
+                      {hayFiltro && <th>Tasa de demanda</th>}
                       <th>Probabilidad de demanda</th>
                     </tr>
                   </thead>
@@ -264,8 +316,8 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
                         <td>{f.centro}</td>
                         <td>{f.tipoRespuesta}</td>
                         <td>{f.jornada}</td>
-                        {filtradoPor && <td>{f.nFichas ?? '—'}</td>}
-                        {filtradoPor && (
+                        {hayFiltro && <td>{f.nFichas ?? '—'}</td>}
+                        {hayFiltro && (
                           <td>
                             {f.tasaExito === null ? (
                               '—'
@@ -296,7 +348,7 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
           <div className="modal__grid modal__grid--2col">
             {detalle.porModalidad.length > 0 && (
               <div className="modal__section">
-                <h4>Probabilidad por modalidad{filtradoPor ? ` en ${filtradoPor}` : ''}</h4>
+                <h4>Probabilidad por modalidad{sufijoSeccion}</h4>
                 <div className="table-scroll">
                   <table className="data-table data-table--compact">
                     <thead>
@@ -336,7 +388,7 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
 
             {detalle.porJornada.length > 0 && (
               <div className="modal__section">
-                <h4>Desempeño por jornada{filtradoPor ? ` en ${filtradoPor}` : ''}</h4>
+                <h4>Desempeño por jornada{sufijoSeccion}</h4>
                 <table className="data-table data-table--compact">
                   <thead>
                     <tr>
@@ -364,7 +416,7 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
 
             {detalle.porAnio.length > 0 && (
               <div className="modal__section">
-                <h4>Historial por año{filtradoPor ? ` en ${filtradoPor}` : ''}</h4>
+                <h4>Historial por año{sufijoSeccion}</h4>
                 <table className="data-table data-table--compact">
                   <thead>
                     <tr>

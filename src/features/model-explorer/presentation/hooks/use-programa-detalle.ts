@@ -21,23 +21,26 @@ export function useProgramaDetalle() {
   const [codigoActivo, setCodigoActivo] = useState<number | null>(null);
   const requestRef = useRef(0);
 
-  const cargar = useCallback((codigo: number, municipio?: string) => {
-    const id = ++requestRef.current;
-    getProgramaDetalle(modelRepository, codigo, municipio)
-      .then((data) => {
-        if (requestRef.current !== id) return;
-        setState({ data, loading: false, refreshing: false, error: null });
-      })
-      .catch((e: unknown) => {
-        if (requestRef.current !== id) return;
-        setState((prev) => ({
-          ...prev,
-          loading: false,
-          refreshing: false,
-          error: prev.data ? prev.error : errorMessage(e),
-        }));
-      });
-  }, []);
+  const cargar = useCallback(
+    (codigo: number, municipio?: string, centro?: string) => {
+      const id = ++requestRef.current;
+      getProgramaDetalle(modelRepository, codigo, municipio, centro)
+        .then((data) => {
+          if (requestRef.current !== id) return;
+          setState({ data, loading: false, refreshing: false, error: null });
+        })
+        .catch((e: unknown) => {
+          if (requestRef.current !== id) return;
+          setState((prev) => ({
+            ...prev,
+            loading: false,
+            refreshing: false,
+            error: prev.data ? prev.error : errorMessage(e),
+          }));
+        });
+    },
+    [],
+  );
 
   const open = useCallback(
     (codigo: number) => {
@@ -48,11 +51,11 @@ export function useProgramaDetalle() {
     [cargar],
   );
 
-  const filtrarMunicipio = useCallback(
-    (municipio: string | null) => {
+  const filtrar = useCallback(
+    (municipio: string | null, centro: string | null) => {
       if (codigoActivo === null) return;
       setState((prev) => ({ ...prev, refreshing: true, error: null }));
-      cargar(codigoActivo, municipio ?? undefined);
+      cargar(codigoActivo, municipio ?? undefined, centro ?? undefined);
     },
     [codigoActivo, cargar],
   );
@@ -63,5 +66,5 @@ export function useProgramaDetalle() {
     setState({ data: null, loading: false, refreshing: false, error: null });
   }, []);
 
-  return { ...state, codigoActivo, open, close, filtrarMunicipio };
+  return { ...state, codigoActivo, open, close, filtrar };
 }
