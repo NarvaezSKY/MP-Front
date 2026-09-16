@@ -17,6 +17,7 @@ import type {
 import type {
   ApiDetalleAnio,
   ApiDetalleJornada,
+  ApiDetalleModalidad,
   ApiDetalleMunicipio,
   ApiFichaOferta,
   ApiHealth,
@@ -41,6 +42,7 @@ function mapPrograma(d: ApiPrograma): Programa {
     nivel: d.NIVEL ?? null,
     redConocimiento: normalizarRed(d['Red de Conocimiento']),
     apuestasPrioritarias: d['APUESTAS PRIORITARIAS'] ?? null,
+    modalidad: d.MODALIDAD ?? null,
     centro: d.CENTRO ?? null,
     tipoRespuesta: d.TIPO_RESPUESTA,
     municipio: d.MUNICIPIO ?? null,
@@ -115,6 +117,15 @@ function mapDetalleJornada(d: ApiDetalleJornada) {
   };
 }
 
+function mapDetalleModalidad(d: ApiDetalleModalidad) {
+  return {
+    modalidad: d.modalidad,
+    nFichas: Number(d.n_fichas),
+    tasaExito: Number(d.tasa_exito),
+    probModelo: d.prob_modelo === null ? null : Number(d.prob_modelo),
+  };
+}
+
 function mapDetalleAnio(d: ApiDetalleAnio) {
   return {
     anio: Number(d.anio),
@@ -146,6 +157,10 @@ function mapProgramaDetalle(d: ApiProgramaDetalle): ProgramaDetalle {
     })),
     porMunicipio: d.por_municipio.map(mapDetalleMunicipio),
     porJornada: d.por_jornada.map(mapDetalleJornada),
+    porModalidad: (d.por_modalidad ?? []).map(mapDetalleModalidad),
+    mejorModalidad: d.mejor_modalidad === null || d.mejor_modalidad === undefined
+      ? null
+      : mapDetalleModalidad(d.mejor_modalidad),
     porAnio: d.por_anio.map(mapDetalleAnio),
     municipio: d.municipio ?? null,
   };
@@ -175,8 +190,11 @@ export class ModelApiAdapter implements ModelRepository {
     };
   }
 
-  async getPrograms(): Promise<ProgramasResponse> {
-    const { data } = await httpClient.get<ApiProgramasResponse>('/programs');
+  async getPrograms(modalidad?: string): Promise<ProgramasResponse> {
+    const params = modalidad
+      ? `?modalidad=${encodeURIComponent(modalidad)}`
+      : '';
+    const { data } = await httpClient.get<ApiProgramasResponse>(`/programs${params}`);
     return {
       total: data.total,
       programas: data.programas.map(mapPrograma),

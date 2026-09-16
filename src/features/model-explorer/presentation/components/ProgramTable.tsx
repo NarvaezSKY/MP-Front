@@ -42,6 +42,7 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
               <th>Nivel</th>
               <th>Probabilidad de demanda</th>
               <th>Tipo respuesta</th>
+              <th>Modalidad</th>
               <th>Red</th>
             </tr>
           </thead>
@@ -63,6 +64,7 @@ export function ProgramTable({ programas, currentPage, totalPages, total, goToPa
                   </span>
                 </td>
                 <td>{p.tipoRespuesta}</td>
+                <td>{p.modalidad ?? '—'}</td>
                 <td>{p.redConocimiento ?? '—'}</td>
               </tr>
             ))}

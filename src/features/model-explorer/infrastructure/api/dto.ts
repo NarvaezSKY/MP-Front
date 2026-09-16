@@ -4,6 +4,7 @@ export interface ApiPrograma {
   NIVEL: string | null;
   'Red de Conocimiento': string | null;
   'APUESTAS PRIORITARIAS': string | null;
+  MODALIDAD: string | null;
   CENTRO: string | null;
   TIPO_RESPUESTA: string;
   MUNICIPIO: string | null;
@@ -120,6 +121,13 @@ export interface ApiDetalleJornada {
   tasa_exito: number;
 }
 
+export interface ApiDetalleModalidad {
+  modalidad: string;
+  n_fichas: number;
+  tasa_exito: number;
+  prob_modelo: number | null;
+}
+
 export interface ApiDetalleAnio {
   anio: number;
   n_fichas: number;
@@ -150,6 +158,8 @@ export interface ApiProgramaDetalle {
   filas: ApiDetalleFilaPrograma[];
   por_municipio: ApiDetalleMunicipio[];
   por_jornada: ApiDetalleJornada[];
+  por_modalidad: ApiDetalleModalidad[];
+  mejor_modalidad: ApiDetalleModalidad | null;
   por_anio: ApiDetalleAnio[];
   municipio: string | null;
 }

@@ -19,6 +19,7 @@ import {
   uniqueNiveles,
   uniqueRedes,
   uniqueMunicipios,
+  uniqueModalidades,
 } from './lib/filter-options';
 import { normalizeText } from './lib/strings';
 
@@ -27,7 +28,11 @@ type ModalState =
   | { tipo: 'municipio'; municipio: string };
 
 export function ModelExplorerPage() {
-  const { programas, loading, error, reload } = usePrograms();
+  const [seleccionModalidad, setSeleccionModalidad] = useState<string[]>([]);
+  const modalidadSel = seleccionModalidad[0] ?? null;
+  const { programas, loading, refreshing, error, reload } = usePrograms(
+    modalidadSel ?? undefined,
+  );
   const ultimaOferta = useUltimaOferta();
   const detalle = useProgramaDetalle();
   const [seleccionCentros, setSeleccionCentros] = useState<string[]>([]);
@@ -43,6 +48,7 @@ export function ModelExplorerPage() {
   const niveles = useMemo(() => uniqueNiveles(programas), [programas]);
   const redes = useMemo(() => uniqueRedes(programas), [programas]);
   const municipios = useMemo(() => uniqueMunicipios(programas), [programas]);
+  const modalidades = useMemo(() => uniqueModalidades(programas), [programas]);
 
   const municipiosNorm = useMemo(
     () => new Set(seleccionMunicipios.map(normalizeText)),
@@ -97,6 +103,8 @@ export function ModelExplorerPage() {
     setSeleccionMunicipios((prev) =>
       prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m],
     );
+  const toggleModalidad = (m: string) =>
+    setSeleccionModalidad((prev) => (prev.includes(m) ? [] : [m]));
 
   const limpiarTodos = () => {
     setSeleccionCentros([]);
@@ -104,6 +112,7 @@ export function ModelExplorerPage() {
     setSeleccionNiveles([]);
     setSeleccionRedes([]);
     setSeleccionMunicipios([]);
+    setSeleccionModalidad([]);
   };
 
   const activos =
@@ -111,7 +120,8 @@ export function ModelExplorerPage() {
     seleccionTipos.length +
     seleccionNiveles.length +
     seleccionRedes.length +
-    seleccionMunicipios.length;
+    seleccionMunicipios.length +
+    seleccionModalidad.length;
 
   const verPrograma = (codigo: number) => {
     setModal({ tipo: 'programa', codigo });
@@ -124,7 +134,7 @@ export function ModelExplorerPage() {
   };
 
   if (loading) return <Loader label="Cargando datos del modelo..." />;
-  if (error) return <ErrorBox message={error} />;
+  if (error && programas.length === 0) return <ErrorBox message={error} />;
 
   return (
     <div className="dashboard">
@@ -177,6 +187,14 @@ export function ModelExplorerPage() {
               onClear: () => setSeleccionRedes([]),
             },
             {
+              label: 'Modalidad',
+              kind: modalidades.length <= 15 ? 'dropdown' : 'modal',
+              opciones: modalidades,
+              seleccion: seleccionModalidad,
+              onToggle: toggleModalidad,
+              onClear: () => setSeleccionModalidad([]),
+            },
+            {
               label: 'Municipio',
               kind: 'modal',
               opciones: municipios,
@@ -190,6 +208,13 @@ export function ModelExplorerPage() {
         />
 
         <div className="dashboard-main">
+          {modalidadSel && (
+            <p className="dashboard-note">
+              Probabilidad re-estimada para la modalidad «{modalidadSel}»
+              {refreshing && '… actualizando'}
+            </p>
+          )}
+
           <StatCards programas={filtrados} filtrado={filtrado} />
 
           <Section title="Probabilidad de demanda — Top 30">

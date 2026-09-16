@@ -5,7 +5,10 @@ export const getHealth = (repo: ModelRepository): Promise<HealthStatus> => repo.
 
 export const getTop30 = (repo: ModelRepository): Promise<Top30Response> => repo.getTop30();
 
-export const getPrograms = (repo: ModelRepository): Promise<ProgramasResponse> => repo.getPrograms();
+export const getPrograms = (
+  repo: ModelRepository,
+  modalidad?: string,
+): Promise<ProgramasResponse> => repo.getPrograms(modalidad);
 
 export const getMetricas = (repo: ModelRepository): Promise<Metricas> => repo.getMetricas();
 

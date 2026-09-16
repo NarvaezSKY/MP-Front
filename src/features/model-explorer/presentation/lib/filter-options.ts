@@ -20,6 +20,10 @@ export function uniqueRedes(programas: Programa[]): string[] {
   return distinct(programas.map((p) => p.redConocimiento ?? ''));
 }
 
+export function uniqueModalidades(programas: Programa[]): string[] {
+  return distinct(programas.map((p) => p.modalidad ?? ''));
+}
+
 export function uniqueMunicipios(programas: Programa[]): string[] {
   return distinct(programas.map((p) => p.municipio ?? ''));
 }

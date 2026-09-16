@@ -6,6 +6,7 @@ export interface Programa {
   nivel: string | null;
   redConocimiento: string | null;
   apuestasPrioritarias: string | null;
+  modalidad: string | null;
   centro: string | null;
   tipoRespuesta: string;
   municipio: string | null;
@@ -118,6 +119,13 @@ export interface DetalleJornada {
   tasaExito: number;
 }
 
+export interface DetalleModalidad {
+  modalidad: string;
+  nFichas: number;
+  tasaExito: number;
+  probModelo: number | null;
+}
+
 export interface DetalleAnio {
   anio: number;
   nFichas: number;
@@ -148,6 +156,8 @@ export interface ProgramaDetalle {
   filas: DetalleFilaPrograma[];
   porMunicipio: DetalleMunicipio[];
   porJornada: DetalleJornada[];
+  porModalidad: DetalleModalidad[];
+  mejorModalidad: DetalleModalidad | null;
   porAnio: DetalleAnio[];
   municipio: string | null;
 }

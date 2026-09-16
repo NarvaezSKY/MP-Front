@@ -36,6 +36,7 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
   }, [onClose]);
 
   const mejor = detalle.mejorJornada;
+  const mejorModalidad = detalle.mejorModalidad;
   const municipiosOfertados = detalle.porMunicipio;
   const filtradoPor = detalle.municipio;
   const sel = municipiosOfertados.find((m) => m.municipio === municipioSel) ?? null;
@@ -103,6 +104,21 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
                     {mejor.jornada}{' '}
                     <span className={`badge badge--${probColor(mejor.tasaExito)}`}>
                       {numPCT(mejor.tasaExito)}
+                    </span>
+                  </>
+                ) : (
+                  '—'
+                )}
+              </span>
+            </div>
+            <div className="stat-cell">
+              <span className="stat-cell__label">Mejor modalidad</span>
+              <span className="stat-cell__value">
+                {mejorModalidad ? (
+                  <>
+                    {mejorModalidad.modalidad}{' '}
+                    <span className={`badge badge--${probColor(mejorModalidad.probModelo ?? 0)}`}>
+                      {numPCT(mejorModalidad.probModelo)}
                     </span>
                   </>
                 ) : (
@@ -278,6 +294,46 @@ export function ProgramaModal({ detalle, refreshing, onFiltrarMunicipio, onClose
           )}
 
           <div className="modal__grid modal__grid--2col">
+            {detalle.porModalidad.length > 0 && (
+              <div className="modal__section">
+                <h4>Probabilidad por modalidad{filtradoPor ? ` en ${filtradoPor}` : ''}</h4>
+                <div className="table-scroll">
+                  <table className="data-table data-table--compact">
+                    <thead>
+                      <tr>
+                        <th>Modalidad</th>
+                        <th>Fichas</th>
+                        <th>Probabilidad de demanda</th>
+                        <th>Tasa de demanda</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {detalle.porModalidad.map((m) => (
+                        <tr key={m.modalidad}>
+                          <td>{m.modalidad}</td>
+                          <td>{m.nFichas}</td>
+                          <td>
+                            {m.probModelo === null ? (
+                              '—'
+                            ) : (
+                              <span className={`badge badge--${probColor(m.probModelo)}`}>
+                                {(m.probModelo * 100).toFixed(1)}%
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <span className={`badge badge--${probColor(m.tasaExito)}`}>
+                              {numPCT(m.tasaExito)}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
             {detalle.porJornada.length > 0 && (
               <div className="modal__section">
                 <h4>Desempeño por jornada{filtradoPor ? ` en ${filtradoPor}` : ''}</h4>
