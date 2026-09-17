@@ -134,6 +134,10 @@ export interface ApiDetalleAnio {
   ejecutadas: number;
   canceladas: number;
   tasa_exito: number;
+  prom_inscritos: number;
+  prom_matriculados: number;
+  prom_certificados: number;
+  prom_desertados: number;
 }
 
 export interface ApiDetalleFilaPrograma {

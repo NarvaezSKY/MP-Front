@@ -132,6 +132,10 @@ export interface DetalleAnio {
   ejecutadas: number;
   canceladas: number;
   tasaExito: number;
+  promInscritos: number;
+  promMatriculados: number;
+  promCertificados: number;
+  promDesertados: number;
 }
 
 export interface DetalleFilaPrograma {

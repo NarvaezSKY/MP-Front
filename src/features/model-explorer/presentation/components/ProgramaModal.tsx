@@ -417,32 +417,45 @@ export function ProgramaModal({ detalle, refreshing, onFiltrar, onClose }: Props
             {detalle.porAnio.length > 0 && (
               <div className="modal__section">
                 <h4>Historial por año{sufijoSeccion}</h4>
-                <table className="data-table data-table--compact">
-                  <thead>
-                    <tr>
-                      <th>Año</th>
-                      <th>Fichas</th>
-                      <th>Ejecutadas</th>
-                      <th>Canceladas</th>
-                      <th>Tasa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detalle.porAnio.map((a) => (
-                      <tr key={a.anio}>
-                        <td>{a.anio}</td>
-                        <td>{a.nFichas}</td>
-                        <td>{a.ejecutadas}</td>
-                        <td>{a.canceladas}</td>
-                        <td>
-                          <span className={`badge badge--${probColor(a.tasaExito)}`}>
-                            {numPCT(a.tasaExito)}
-                          </span>
-                        </td>
+                <div className="table-scroll">
+                  <table className="data-table data-table--compact">
+                    <thead>
+                      <tr>
+                        <th>Año</th>
+                        <th>Fichas</th>
+                        <th>Ejecutadas</th>
+                        <th>Canceladas</th>
+                        <th>Tasa</th>
+                        <th title="Promedio de inscritos por ficha">Inscritos*</th>
+                        <th title="Promedio de matriculados por ficha">Matriculados*</th>
+                        <th title="Promedio de certificados por ficha">Certificados*</th>
+                        <th title="Promedio de desertados por ficha">Desertados*</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {detalle.porAnio.map((a) => (
+                        <tr key={a.anio}>
+                          <td>{a.anio}</td>
+                          <td>{a.nFichas}</td>
+                          <td>{a.ejecutadas}</td>
+                          <td>{a.canceladas}</td>
+                          <td>
+                            <span className={`badge badge--${probColor(a.tasaExito)}`}>
+                              {numPCT(a.tasaExito)}
+                            </span>
+                          </td>
+                          <td>{a.promInscritos}</td>
+                          <td>{a.promMatriculados}</td>
+                          <td>{a.promCertificados}</td>
+                          <td>{a.promDesertados}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="chart-note">
+                  * Promedios por ficha del año. Desertados ~ matriculados − (certificados + activos + por certificar).
+                </p>
               </div>
             )}
           </div>

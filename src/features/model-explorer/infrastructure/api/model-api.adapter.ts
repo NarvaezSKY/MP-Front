@@ -134,6 +134,10 @@ function mapDetalleAnio(d: ApiDetalleAnio) {
     ejecutadas: Number(d.ejecutadas),
     canceladas: Number(d.canceladas),
     tasaExito: Number(d.tasa_exito),
+    promInscritos: Number(d.prom_inscritos),
+    promMatriculados: Number(d.prom_matriculados),
+    promCertificados: Number(d.prom_certificados),
+    promDesertados: Number(d.prom_desertados),
   };
 }
 
