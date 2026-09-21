@@ -385,6 +385,7 @@ body {
 .filter-sidebar__trigger {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -408,6 +409,7 @@ body {
 }
 
 .filter-sidebar__trigger-label {
+  flex-shrink: 0;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -415,7 +417,12 @@ body {
 }
 
 .filter-sidebar__trigger-value {
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--muted);
   font-size: 12px;
 }

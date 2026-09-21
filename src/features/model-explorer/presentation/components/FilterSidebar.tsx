@@ -62,6 +62,7 @@ export function FilterSidebar({ grupos, activos, onClearAll }: Props) {
                   type="button"
                   className={`filter-sidebar__trigger${dropAbierto === g.label ? ' filter-sidebar__trigger--open' : ''}`}
                   aria-expanded={g.kind === 'dropdown' ? dropAbierto === g.label : undefined}
+                  title={summary(g.opciones, g.seleccion)}
                   onClick={() => {
                     if (g.kind === 'modal') {
                       setDropAbierto(null);
