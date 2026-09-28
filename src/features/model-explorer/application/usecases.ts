@@ -1,5 +1,5 @@
 import type { ModelRepository } from '../domain/ports';
-import type { HealthStatus, Metricas, PredictionRequest, ProgramasResponse, Top30Response, UltimaOfertaResponse } from '../domain/entities';
+import type { HealthStatus, Metricas, PredictionRequest, ProgramasFiltros, ProgramasResponse, Top30Response, UltimaOfertaResponse } from '../domain/entities';
 
 export const getHealth = (repo: ModelRepository): Promise<HealthStatus> => repo.getHealth();
 
@@ -7,8 +7,8 @@ export const getTop30 = (repo: ModelRepository): Promise<Top30Response> => repo.
 
 export const getPrograms = (
   repo: ModelRepository,
-  modalidad?: string,
-): Promise<ProgramasResponse> => repo.getPrograms(modalidad);
+  filtros?: ProgramasFiltros,
+): Promise<ProgramasResponse> => repo.getPrograms(filtros);
 
 export const getMetricas = (repo: ModelRepository): Promise<Metricas> => repo.getMetricas();
 

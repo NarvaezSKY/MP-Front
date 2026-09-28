@@ -6,6 +6,7 @@ import type {
   PredictionRequest,
   Programa,
   ProgramaDetalle,
+  ProgramasFiltros,
   ProgramasResponse,
   Top30Response,
   UltimaOfertaResponse,
@@ -18,7 +19,7 @@ import type {
 export interface ModelRepository {
   getHealth(): Promise<HealthStatus>;
   getTop30(): Promise<Top30Response>;
-  getPrograms(modalidad?: string): Promise<ProgramasResponse>;
+  getPrograms(filtros?: ProgramasFiltros): Promise<ProgramasResponse>;
   getMetricas(): Promise<Metricas>;
   predict(request: PredictionRequest): Promise<Programa[]>;
   getUltimaOferta(): Promise<UltimaOfertaResponse>;

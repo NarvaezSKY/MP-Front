@@ -21,9 +21,28 @@ export interface Top30Response {
   programas: Programa[];
 }
 
+export interface ProgramasFiltros {
+  modalidad?: string[];
+  municipio?: string[];
+  nivel?: string[];
+  red?: string[];
+  centro?: string[];
+  tipo?: string[];
+}
+
+export interface FiltrosCatalogo {
+  centros: string[];
+  tipos: string[];
+  niveles: string[];
+  redes: string[];
+  municipios: string[];
+  modalidades: string[];
+}
+
 export interface ProgramasResponse {
   total: number;
   programas: Programa[];
+  filtros: FiltrosCatalogo;
 }
 
 export interface Metricas {
@@ -132,10 +151,10 @@ export interface DetalleAnio {
   ejecutadas: number;
   canceladas: number;
   tasaExito: number;
-  promInscritos: number;
-  promMatriculados: number;
-  promCertificados: number;
-  promDesertados: number;
+  promInscritos: number | null;
+  promMatriculados: number | null;
+  promCertificados: number | null;
+  promDesertados: number | null;
 }
 
 export interface DetalleFilaPrograma {

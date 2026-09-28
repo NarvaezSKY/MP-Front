@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { modelRepository } from '../../infrastructure/composition-root';
 import { getPrograms } from '../../application/usecases';
-import type { ProgramasResponse } from '../../domain/entities';
+import type { FiltrosCatalogo, ProgramasFiltros, ProgramasResponse } from '../../domain/entities';
 import { errorMessage } from './use-model-data';
 
 interface AsyncState<T> {
@@ -11,7 +11,16 @@ interface AsyncState<T> {
   error: string | null;
 }
 
-export function usePrograms(modalidad?: string) {
+const FILTROS_VACIOS: FiltrosCatalogo = {
+  centros: [],
+  tipos: [],
+  niveles: [],
+  redes: [],
+  municipios: [],
+  modalidades: [],
+};
+
+export function usePrograms(filtros?: ProgramasFiltros) {
   const [state, setState] = useState<AsyncState<ProgramasResponse>>({
     data: null,
     loading: true,
@@ -19,6 +28,8 @@ export function usePrograms(modalidad?: string) {
     error: null,
   });
   const requestRef = useRef(0);
+
+  const key = filtros ? JSON.stringify(filtros) : '';
 
   const load = () => {
     const id = ++requestRef.current;
@@ -28,7 +39,7 @@ export function usePrograms(modalidad?: string) {
       refreshing: s.data !== null,
       error: null,
     }));
-    getPrograms(modelRepository, modalidad)
+    getPrograms(modelRepository, filtros ? { ...filtros } : undefined)
       .then((data) => {
         if (requestRef.current !== id) return;
         setState({ data, loading: false, refreshing: false, error: null });
@@ -44,10 +55,11 @@ export function usePrograms(modalidad?: string) {
       });
   };
 
-  useEffect(load, [modalidad]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(load, [key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     programas: state.data?.programas ?? [],
+    filtros: state.data?.filtros ?? FILTROS_VACIOS,
     total: state.data?.total ?? 0,
     loading: state.loading,
     refreshing: state.refreshing,

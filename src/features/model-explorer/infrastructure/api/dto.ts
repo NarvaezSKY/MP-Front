@@ -19,9 +19,19 @@ export interface ApiTop30 {
   programas: ApiPrograma[];
 }
 
+export interface ApiFiltrosCatalogo {
+  centros: string[];
+  tipos: string[];
+  niveles: string[];
+  redes: string[];
+  municipios: string[];
+  modalidades: string[];
+}
+
 export interface ApiProgramasResponse {
   total: number;
   programas: ApiPrograma[];
+  filtros: ApiFiltrosCatalogo;
 }
 
 export interface ApiMetricas {
@@ -134,10 +144,10 @@ export interface ApiDetalleAnio {
   ejecutadas: number;
   canceladas: number;
   tasa_exito: number;
-  prom_inscritos: number;
-  prom_matriculados: number;
-  prom_certificados: number;
-  prom_desertados: number;
+  prom_inscritos: number | null;
+  prom_matriculados: number | null;
+  prom_certificados: number | null;
+  prom_desertados: number | null;
 }
 
 export interface ApiDetalleFilaPrograma {

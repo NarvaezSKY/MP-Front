@@ -444,10 +444,10 @@ export function ProgramaModal({ detalle, refreshing, onFiltrar, onClose }: Props
                               {numPCT(a.tasaExito)}
                             </span>
                           </td>
-                          <td>{a.promInscritos}</td>
-                          <td>{a.promMatriculados}</td>
-                          <td>{a.promCertificados}</td>
-                          <td>{a.promDesertados}</td>
+                          <td>{a.promInscritos ?? '—'}</td>
+                          <td>{a.promMatriculados ?? '—'}</td>
+                          <td>{a.promCertificados ?? '—'}</td>
+                          <td>{a.promDesertados ?? '—'}</td>
                         </tr>
                       ))}
                     </tbody>

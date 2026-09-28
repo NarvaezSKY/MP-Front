@@ -10,6 +10,7 @@ import type {
   PredictionRequest,
   Programa,
   ProgramaDetalle,
+  ProgramasFiltros,
   ProgramasResponse,
   Top30Response,
   UltimaOfertaResponse,
@@ -128,16 +129,17 @@ function mapDetalleModalidad(d: ApiDetalleModalidad) {
 }
 
 function mapDetalleAnio(d: ApiDetalleAnio) {
+  const num = (v: number | null) => (v === null || v === undefined ? null : Number(v));
   return {
     anio: Number(d.anio),
     nFichas: Number(d.n_fichas),
     ejecutadas: Number(d.ejecutadas),
     canceladas: Number(d.canceladas),
     tasaExito: Number(d.tasa_exito),
-    promInscritos: Number(d.prom_inscritos),
-    promMatriculados: Number(d.prom_matriculados),
-    promCertificados: Number(d.prom_certificados),
-    promDesertados: Number(d.prom_desertados),
+    promInscritos: num(d.prom_inscritos),
+    promMatriculados: num(d.prom_matriculados),
+    promCertificados: num(d.prom_certificados),
+    promDesertados: num(d.prom_desertados),
   };
 }
 
@@ -207,14 +209,30 @@ export class ModelApiAdapter implements ModelRepository {
     };
   }
 
-  async getPrograms(modalidad?: string): Promise<ProgramasResponse> {
-    const params = modalidad
-      ? `?modalidad=${encodeURIComponent(modalidad)}`
-      : '';
-    const { data } = await httpClient.get<ApiProgramasResponse>(`/programs${params}`);
+  async getPrograms(filtros?: ProgramasFiltros): Promise<ProgramasResponse> {
+    const params = new URLSearchParams();
+    if (filtros) {
+      Object.entries(filtros).forEach(([k, v]) => {
+        if (!v) return;
+        if (Array.isArray(v)) v.forEach((val) => params.append(k, val));
+        else params.append(k, v);
+      });
+    }
+    const qs = params.toString();
+    const { data } = await httpClient.get<ApiProgramasResponse>(
+      `/programs${qs ? `?${qs}` : ''}`,
+    );
     return {
       total: data.total,
       programas: data.programas.map(mapPrograma),
+      filtros: {
+        centros: data.filtros?.centros ?? [],
+        tipos: data.filtros?.tipos ?? [],
+        niveles: data.filtros?.niveles ?? [],
+        redes: data.filtros?.redes ?? [],
+        municipios: data.filtros?.municipios ?? [],
+        modalidades: data.filtros?.modalidades ?? [],
+      },
     };
   }
 
