@@ -37,7 +37,7 @@ export function RedBarChart({ programas }: Props) {
   return (
     <Card title="Probabilidad promedio por Red de Conocimiento (Top 10)">
       <div className="chart-scroll" style={{ maxHeight: RED_SCROLL_MAX_H }}>
-        <ResponsiveContainer width="100%" height={Math.max(RED_SCROLL_MAX_H, data.length * RED_ROW_H)}>
+        <ResponsiveContainer width="100%" height={Math.max(RED_SCROLL_MAX_H, data.length * RED_ROW_H)} minWidth={520}>
           <BarChart
             data={data}
             margin={{ left: 8, right: 40, top: 8, bottom: 16 }}

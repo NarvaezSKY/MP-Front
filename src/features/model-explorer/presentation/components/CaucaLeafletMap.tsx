@@ -32,7 +32,7 @@ export function CaucaLeafletMap({ municipios, onMunicipioClick }: Props) {
         center={[2.6, -76.5]}
         zoom={8}
         scrollWheelZoom={true}
-        style={{ height: '480px', width: '100%', borderRadius: 8 }}
+        style={{ height: 'min(480px, 62vh)', width: '100%', borderRadius: 8 }}
       >
         <TileLayer
           attribution='&copy; OpenStreetMap contributors'

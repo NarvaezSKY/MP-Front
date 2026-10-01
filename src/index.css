@@ -502,10 +502,11 @@ body {
 @media (max-width: 900px) {
   .dashboard-layout {
     flex-direction: column;
+    align-items: stretch;
   }
   .filter-sidebar {
     position: static;
-    width: 100%;
+    width: auto;
     max-height: none;
     overflow-y: visible;
   }
@@ -803,8 +804,14 @@ body {
 }
 
 /* Mapa Leaflet */
+/* Aislamiento de stacking: los panes de Leaflet usan z-index hasta 700 y, si
+   este contenedor no crea un contexto de apilamiento propio, se superponen a
+   la cabecera sticky del modal, a las listas del buscador y a cualquier otro
+   componente que tenga un z-index menor. Con position:relative + z-index:0
+   los panes quedan confinados dentro del mapa. */
 .mapa-leaflet {
   position: relative;
+  z-index: 0;
 }
 
 .mapa-leyenda {
@@ -929,6 +936,7 @@ body {
 .modal__head {
   position: sticky;
   top: 0;
+  z-index: 10;
   background: #fff;
   border-bottom: 1px solid var(--panel-2);
   padding: 18px 22px;
@@ -1007,11 +1015,16 @@ body {
 
 .modal__grid--2col {
   grid-template-columns: 1fr 1fr;
+  min-width: 0;
+}
+
+.modal__grid--2col > * {
+  min-width: 0;
 }
 
 @media (max-width: 720px) {
   .modal__grid--2col {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1104,4 +1117,120 @@ body {
 .data-table--compact td {
   padding: 6px 10px;
   font-size: 13px;
+}
+
+/* ── Móvil (≤640px): todo visible y accesible ── */
+@media (max-width: 640px) {
+  .dashboard {
+    padding: 12px 12px 32px;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 12px 14px;
+  }
+
+  .topbar__logo {
+    height: 34px;
+  }
+
+  .topbar__logo--cmr {
+    height: 48px;
+    padding: 6px 10px;
+  }
+
+  .topbar__titles {
+    flex: 1 1 130px;
+  }
+
+  .topbar__titles h1 {
+    font-size: 16px;
+  }
+
+  .topbar__titles p {
+    font-size: 12px;
+  }
+
+  .topbar .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .stat-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .card__title {
+    font-size: 14px;
+  }
+
+  /* Los gráficos se desbordan horizontalmente en pantallas angostas:
+     cada chart fija un ancho mínimo (minWidth) y aquí se permite
+     desplazarse al costado sin romper el layout. */
+  .chart-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .predict-form {
+    flex-wrap: wrap;
+  }
+
+  .predict-form .btn {
+    width: 100%;
+  }
+
+  .ultima-oferta__toolbar {
+    flex-wrap: wrap;
+  }
+
+  .ultima-oferta__toolbar .filter-bar__select {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .modal__head {
+    padding: 14px 16px;
+  }
+
+  .modal__body {
+    padding: 14px 16px 20px;
+  }
+
+  .modal {
+    max-width: none;
+  }
+
+  .modal__title {
+    font-size: 17px;
+  }
+
+  .modal__filtro {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .modal__filtro .filter-bar__select {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .filter-sidebar {
+    padding: 12px;
+  }
+
+  .pagination__info {
+    margin-left: 0;
+    flex-basis: 100%;
+    text-align: left;
+  }
+
+  .mapa-leyenda {
+    gap: 8px 12px;
+  }
 }

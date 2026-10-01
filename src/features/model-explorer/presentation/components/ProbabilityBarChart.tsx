@@ -33,7 +33,7 @@ export function ProbabilityBarChart({ programas }: Props) {
   return (
     <Card title={`Probabilidad de demanda por programa (Top ${Math.min(TOP_N, data.length)} de ${programas.length})`}>
       <div className="chart-scroll" style={{ maxHeight: SCROLL_MAX_H }}>
-        <ResponsiveContainer width="100%" height={Math.max(SCROLL_MAX_H, data.length * ROW_H)}>
+        <ResponsiveContainer width="100%" height={Math.max(SCROLL_MAX_H, data.length * ROW_H)} minWidth={540}>
           <BarChart
             layout="vertical"
             data={data}
